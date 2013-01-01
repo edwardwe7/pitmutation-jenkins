@@ -9,9 +9,7 @@
     Creates a text field that shows the value of the "name" property.
     When submitted, it will be passed to the corresponding constructor parameter.
   -->
-  <f:section title="My Cunt">
-  <f:entry title="Name" field="name">
+  <f:entry title="Mutation Statistics" field="mutationStatsFile">
     <f:textbox />
   </f:entry>
-  </f:section>
 </j:jelly>

@@ -17,6 +17,9 @@ import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
 import hudson.tasks.Recorder;
 import net.sf.json.JSONObject;
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.ParserConfigurationException;
 
 /**
  * @author edward
@@ -44,7 +47,39 @@ public class PitReport extends Recorder {
 
       if (reports.length == 0) {
         listener.getLogger().println("No PIT mutation reports found.");
+        build.setResult(Result.FAILURE);
         return true;
+      }
+      else {
+        try {
+          PitParser parser = new PitParser(reports[0]);
+
+          PitBuildAction action = new PitBuildAction(build, parser.getKillRatio());
+          build.getActions().add(action);
+
+          PitBuildAction previousAction = action.getPreviousResult();
+          if (previousAction == null) { //first build TODO what if failed
+            build.setResult(Result.SUCCESS);
+            return true;
+          }
+
+          Ratio killRatio = parser.getKillRatio();
+          Ratio previousKillRatio = previousAction.getKillRatio();
+          listener.getLogger().println("Kill ratio: " + killRatio);
+          listener.getLogger().println("Previous kill ratio:" + previousKillRatio);
+
+          build.setResult(
+                  killRatio.compareTo(previousKillRatio) < 0
+                          ? Result.FAILURE : Result.SUCCESS);
+
+        } catch (ParserConfigurationException e) {
+          e.printStackTrace(listener.getLogger());
+          build.setResult(Result.FAILURE);
+        } catch (SAXException e) {
+          e.printStackTrace(listener.getLogger());
+          build.setResult(Result.FAILURE);
+        }
+
       }
     }
     return true;
