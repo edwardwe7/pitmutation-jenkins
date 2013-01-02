@@ -115,10 +115,13 @@ public class PitPublisher extends Recorder {
       @Override
       public Result decideResult(final PitBuildAction action) {
         PitBuildAction previousAction = action.getPreviousAction();
-        listener_.getLogger().println("");
-        return previousAction == null
-                ? Result.SUCCESS
-                :  action.getKillRatio().compareTo(previousAction.getKillRatio()) < 0 ? Result.FAILURE : Result.SUCCESS;
+        if (previousAction != null) {
+          listener_.getLogger().println("Previous kill ratio was " + previousAction.getKillRatio() + "%");
+          return action.getKillRatio().compareTo(previousAction.getKillRatio()) < 0 ? Result.FAILURE : Result.SUCCESS;
+        }
+        else {
+          return Result.SUCCESS;
+        }
       }
     };
   }

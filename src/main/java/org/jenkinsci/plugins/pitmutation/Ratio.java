@@ -22,7 +22,7 @@ public class Ratio implements  Comparable<Ratio> {
       return 100;
     }
     else {
-      return numerator_ / denominator_;
+      return 100 * numerator_ / denominator_;
     }
   }
 
