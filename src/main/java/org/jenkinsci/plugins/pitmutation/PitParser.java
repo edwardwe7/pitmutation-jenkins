@@ -18,7 +18,6 @@ public class PitParser {
 
   public PitParser(FilePath report) throws ParserConfigurationException, IOException,
           SAXException {
-//    report_ = report;
 
     DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
     Document doc = parser.parse(report.read());
@@ -34,5 +33,4 @@ public class PitParser {
   }
 
   private Ratio killRatio_;
-//  private FilePath report_;
 }

@@ -1,9 +1,11 @@
 package org.jenkinsci.plugins.pitmutation;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.digester3.Digester;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
 
@@ -142,6 +144,7 @@ public class PitPublisher extends Recorder {
 
   private List<Condition> buildConditions_;
   private String mutationStatsFile_;
+  private String mutationResultsFile_;
   private boolean killRatioMustImprove_;
   private float minimumKillRatio_;
   private transient BuildListener listener_;

@@ -33,5 +33,10 @@
       <version>14.0-rc1</version>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-digester3</artifactId>
+      <version>3.2</version>
+    </dependency>
   </dependencies>
 </project>
