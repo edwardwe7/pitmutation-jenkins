@@ -18,6 +18,10 @@ public class MutationReport {
     digestMutations(xmlReport);
   }
 
+  public List<Mutation> getMutations() {
+    return this.mutations_;
+  }
+
   private void digestMutations(InputStream input) throws IOException, SAXException {
     Digester digester = new Digester();
     digester.addObjectCreate("mutations/mutation", Mutation.class);

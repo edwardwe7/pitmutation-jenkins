@@ -2,15 +2,13 @@ package org.jenkinsci.plugins.pitmutation;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.digester3.Digester;
 import org.junit.Test;
 import org.xml.sax.SAXException;
-import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
 
 /**
  * @author edward
@@ -18,14 +16,10 @@ import static org.junit.Assert.assertThat;
 public class MutationDigester {
   @Test
   public void canDigestAMutation() throws IOException, SAXException {
-    Digester digester = new Digester();
-    digester.addObjectCreate("mutations/mutation", Mutation.class);
-    digester.addSetNext("mutations/mutation", "add", "org.jenkinsci.plugins.pitmutation.Mutation");
-    digester.addSetProperties("mutations/mutation");
-    digester.addSetNestedProperties("mutations/mutation");
-    List<Mutation> mutations= new ArrayList<Mutation>();
-    digester.push(mutations);
-    digester.parse(new ByteArrayInputStream(MUTATIONS.getBytes()));
+    PitBuildAction mockBuild = mock(PitBuildAction.class);
+    MutationReport report = new MutationReport(mockBuild, new ByteArrayInputStream(MUTATIONS.getBytes()));
+
+    List<Mutation> mutations = report.getMutations();
 
     assertThat(mutations.size(), is(2));
 
