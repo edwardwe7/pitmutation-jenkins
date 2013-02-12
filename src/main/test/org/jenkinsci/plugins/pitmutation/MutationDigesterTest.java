@@ -13,7 +13,7 @@ import static org.mockito.Mockito.mock;
 /**
  * @author edward
  */
-public class MutationDigester {
+public class MutationDigesterTest {
   @Test
   public void canDigestAMutation() throws IOException, SAXException {
     PitBuildAction mockBuild = mock(PitBuildAction.class);
