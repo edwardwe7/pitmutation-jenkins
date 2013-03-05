@@ -65,6 +65,9 @@
             <mutator>CONSTRUCTOR_CALLS</mutator>
             <mutator>NON_VOID_METHOD_CALLS</mutator>
           </mutators>
+          <outputFormats>
+            <value>XML</value>
+          </outputFormats>
         </configuration>
       </plugin>
     </plugins>
