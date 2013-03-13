@@ -69,7 +69,7 @@
       <plugin>
         <groupId>org.pitest</groupId>
         <artifactId>pitest-maven</artifactId>
-        <version>LATEST</version>
+        <version>0.29</version>
         <configuration>
           <targetClasses>
             <param>org.jenkinsci.plugins.pitmutation.*</param>

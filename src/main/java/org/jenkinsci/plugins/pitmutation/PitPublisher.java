@@ -65,7 +65,6 @@ public class PitPublisher extends Recorder {
           PitBuildAction action = new PitBuildAction(build, parser.getKillRatio());
           build.getActions().add(action);
           build.setResult(decideBuildResult(action));
-
         } catch (ParserConfigurationException e) {
           e.printStackTrace(listener.getLogger());
           build.setResult(Result.FAILURE);
@@ -165,7 +164,6 @@ public class PitPublisher extends Recorder {
       return true;
     }
 
-
     /**
      * {@inheritDoc}
      */
@@ -184,7 +182,5 @@ public class PitPublisher extends Recorder {
       PitPublisher instance = req.bindJSON(PitPublisher.class, formData);
       return instance;
     }
-
   }
-
 }
