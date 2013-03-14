@@ -9,7 +9,9 @@ public class Mutation {
   public boolean equals(Mutation m) {
     return m.getMutatedClass().equals(getMutatedClass())
            && m.getMutatedMethod().equals(getMutatedMethod())
-           && m.getLineNumber() == getLineNumber();
+           && m.getLineNumber() == getLineNumber()
+           && m.getMutator().equals(getMutator())
+           && m.getStatus().equals(getStatus());
   }
 
   @Override

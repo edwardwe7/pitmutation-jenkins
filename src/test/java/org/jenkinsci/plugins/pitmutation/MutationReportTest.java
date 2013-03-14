@@ -23,7 +23,6 @@ public class MutationReportTest {
   public void setUp() {
     mutationsXml_ = new InputStream[2];
     mutationsXml_[0] = getClass().getResourceAsStream("mutations-00.xml");
-    mutationsXml_[1] = getClass().getResourceAsStream("mutations-01.xml");
   }
 
   @Test
@@ -36,10 +35,8 @@ public class MutationReportTest {
   public void sortsMutationsByClassName() throws IOException, SAXException {
     MutationReport report = new MutationReport(mutationsXml_[0]);
     Set<Mutation> mutations = report.getMutationsForClassName("org.jenkinsci.plugins.pitmutation.MutationReport");
-    assertThat(mutations.size(), is(19));
+    assertThat(mutations.size(), is(31));
   }
-
-
 
   @Test
   public void canDigestAMutation() throws IOException, SAXException {

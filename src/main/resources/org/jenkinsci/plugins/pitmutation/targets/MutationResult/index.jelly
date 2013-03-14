@@ -3,11 +3,12 @@
     <l:layout>
         <st:include it="${it.owner}" page="sidepanel.jelly"/>
         <l:main-panel>
-            <h1>${%Mutations}</h1>
+            <h1>${%New Mutation Targets}</h1>
             <j:forEach var="parent" items="${it.parents}">
                 <a href="${it.relativeUrl(parent)}">${parent.xmlTransform(parent.name)}</a>
                 &gt;
             </j:forEach>
+
             <h2>${it.xmlTransform(it.name)}</h2>
             <j:set var="metrics" value="${it.metrics}"/>
             <h3>${%Trend}</h3>

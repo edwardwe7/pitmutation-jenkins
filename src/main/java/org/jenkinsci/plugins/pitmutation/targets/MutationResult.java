@@ -24,14 +24,24 @@ public class MutationResult implements Serializable {
     return new MutationStats();
   }
 
+  public Collection<String> findNewTargets() {
+    MutationReport report = action_.getReport();
+    MutationReport previous = action_.getPreviousAction().getReport();
+
+    Set<String> targets = new HashSet<String>(report.sourceFilenames());
+
+    targets.removeAll(previous.sourceFilenames());
+
+    return targets;
+  }
+
   public Collection<Mutation> findDifferentMutations(String className) {
     MutationReport report = action_.getReport();
     MutationReport previous = action_.getPreviousAction().getReport();
 
     Set<Mutation> mutations = new HashSet<Mutation>(report.getMutationsForClassName(className));
-    Set<Mutation> previousMutations = new HashSet<Mutation>(previous.getMutationsForClassName(className));
 
-    mutations.removeAll(previousMutations);
+    mutations.removeAll(previous.getMutationsForClassName(className));
     return mutations;
   }
 
