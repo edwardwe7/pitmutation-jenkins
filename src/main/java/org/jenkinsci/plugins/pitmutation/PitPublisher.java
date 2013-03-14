@@ -102,7 +102,7 @@ public class PitPublisher extends Recorder {
       public Result decideResult(PitBuildAction action) {
         Ratio killRatio = action.getKillRatio();
         listener_.getLogger().println("Kill ratio is " + killRatio.asPercentage() +"% ("
-                                      + killRatio.getNumerator() + " / " + killRatio.getDenominator());
+                                      + killRatio.getNumerator() + " / " + killRatio.getDenominator() +")");
         return action.getKillRatio().asPercentage() >= percentage ? Result.SUCCESS : Result.FAILURE;
       }
     };

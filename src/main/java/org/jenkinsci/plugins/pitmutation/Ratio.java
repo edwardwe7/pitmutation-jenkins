@@ -18,12 +18,7 @@ public class Ratio implements  Comparable<Ratio> {
   }
 
   public float asPercentage() {
-    if (denominator_ == 0) {
-      return 100;
-    }
-    else {
-      return 100 * numerator_ / denominator_;
-    }
+    return denominator_ == 0 ? 100 : 100 * numerator_ / denominator_;
   }
 
   public int compareTo(final Ratio other) {

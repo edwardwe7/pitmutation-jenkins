@@ -10,7 +10,10 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.digester3.Digester;
+import org.jenkinsci.plugins.pitmutation.targets.MutationResult;
 import org.xml.sax.SAXException;
+
+import hudson.model.AbstractBuild;
 
 /**
  * @author edward
@@ -70,7 +73,11 @@ public class MutationReport {
     mutationSet.add(mutation);
   }
 
+  public MutationResult getMutationResult(AbstractBuild owner) {
+    return new MutationResult(owner);
+  }
+
   private Map<String, Set<Mutation>> mutationsByClass_;
-  private Ratio killRatio_;
+  private Ratio killRatio_ = new Ratio(0,0);
   private List<Mutation> mutations_ = new ArrayList<Mutation>();
 }
