@@ -1,6 +1,8 @@
 package org.jenkinsci.plugins.pitmutation;
 
 import hudson.model.Result;
+
+import org.jenkinsci.plugins.pitmutation.targets.MutationResult;
 import org.kohsuke.stapler.StaplerProxy;
 
 import hudson.model.AbstractBuild;
@@ -15,7 +17,6 @@ public class PitBuildAction implements HealthReportingAction, StaplerProxy {
   public PitBuildAction(AbstractBuild<?,?> owner, MutationReport report) {
     owner_ = owner;
     report_ = report;
-    killRatio_ = report.getKillRatio();
   }
 
   public PitBuildAction getPreviousAction() {
@@ -32,12 +33,17 @@ public class PitBuildAction implements HealthReportingAction, StaplerProxy {
     }
   }
 
+  public MutationResult getResult() {
+    return null; //TODO
+  }
+
   public Ratio getKillRatio() {
-    return killRatio_;
+    return report_.getKillRatio();
   }
 
   public HealthReport getBuildHealth() {
-    return new HealthReport((int) killRatio_.asPercentage(), Messages._BuildAction_Description(killRatio_));
+    return new HealthReport((int) report_.getKillRatio().asPercentage(),
+            Messages._BuildAction_Description(report_.getKillRatio()));
   }
 
   public String getIconFileName() {
@@ -58,6 +64,5 @@ public class PitBuildAction implements HealthReportingAction, StaplerProxy {
 
   private AbstractBuild<?, ?> owner_;
   private MutationReport report_;
-  private Ratio killRatio_;
   private Ratio failThreshold_;
 }

@@ -4,9 +4,12 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Set;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.xml.sax.SAXException;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
@@ -16,13 +19,33 @@ import static org.mockito.Mockito.mock;
  */
 public class MutationReportTest {
 
+  @Before
+  public void setUp() {
+    mutationsXml_ = new InputStream[2];
+    mutationsXml_[0] = getClass().getResourceAsStream("mutations-00.xml");
+    mutationsXml_[1] = getClass().getResourceAsStream("mutations-01.xml");
+  }
+
   @Test
   public void countsKills() throws IOException, SAXException {
-    InputStream fileStream = getClass().getResourceAsStream("mutations.xml");
-
-    MutationReport report = new MutationReport(fileStream);
-
+    MutationReport report = new MutationReport(mutationsXml_[0]);
     assertThat(report.getKillRatio(), is(new Ratio(32,329)));
+  }
+
+  @Test
+  public void sortsMutationsByClassName() throws IOException, SAXException {
+    MutationReport report = new MutationReport(mutationsXml_[0]);
+    Set<Mutation> mutations = report.getMutationsForClassName("org.jenkinsci.plugins.pitmutation.MutationReport");
+    assertThat(mutations.size(), is(19));
+  }
+
+  @Test
+  public void countsDifferentMutationsByBuild() throws IOException, SAXException {
+    MutationReport reportOld = new MutationReport(mutationsXml_[0]);
+    MutationReport reportNew = new MutationReport(mutationsXml_[1]);
+
+    Set<Mutation> mutations = reportNew.getMutationsForClassName("org.jenkinsci.plugins.pitmutation.MutationReport");
+    assertThat(mutations.size(), is(28));
   }
 
   @Test
@@ -49,6 +72,8 @@ public class MutationReportTest {
     assertThat(m2.getMutatedClass(), is("com.mediagraft.podsplice.controllers.massupload.SafeMultipartFile"));
     assertThat(m2.getMutator(), is("org.pitest.mutationtest.engine.gregor.mutators.ReturnValsMutator"));
   }
+
+  private InputStream[] mutationsXml_;
 
   private final String MUTATIONS =
           "<mutations>"

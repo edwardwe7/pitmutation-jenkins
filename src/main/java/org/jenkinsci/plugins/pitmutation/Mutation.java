@@ -7,7 +7,9 @@ public class Mutation {
 
   //TODO better equals
   public boolean equals(Mutation m) {
-    return m.getMutatedClass().equals(getMutatedClass()) && m.getMutatedMethod().equals(getMutatedMethod());
+    return m.getMutatedClass().equals(getMutatedClass())
+           && m.getMutatedMethod().equals(getMutatedMethod())
+           && m.getLineNumber() == getLineNumber();
   }
 
   @Override

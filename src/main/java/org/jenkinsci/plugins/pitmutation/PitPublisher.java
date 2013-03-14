@@ -21,8 +21,6 @@ import hudson.tasks.Recorder;
 import net.sf.json.JSONObject;
 import org.xml.sax.SAXException;
 
-import javax.xml.parsers.ParserConfigurationException;
-
 /**
  * @author edward
  */
@@ -69,7 +67,6 @@ public class PitPublisher extends Recorder {
           e.printStackTrace(listener_.getLogger());
           return false;
         }
-
       }
     }
     return true;
@@ -103,7 +100,9 @@ public class PitPublisher extends Recorder {
     return new Condition() {
       @Override
       public Result decideResult(PitBuildAction action) {
-        listener_.getLogger().println("Kill ratio is " + action.getKillRatio().asPercentage() +"%");
+        Ratio killRatio = action.getKillRatio();
+        listener_.getLogger().println("Kill ratio is " + killRatio.asPercentage() +"% ("
+                                      + killRatio.getNumerator() + " / " + killRatio.getDenominator());
         return action.getKillRatio().asPercentage() >= percentage ? Result.SUCCESS : Result.FAILURE;
       }
     };
