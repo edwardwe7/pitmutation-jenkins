@@ -11,6 +11,18 @@
   <version>1.0-2</version>
   <packaging>hpi</packaging>
 
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
+  <developers>
+    <developer>
+      <id>edkimber</id>
+      <name>Edward Kimber</name>
+      <email>edward.kimber@gmail.com</email>
+    </developer>
+  </developers>
+
   <!-- get every artifact through repo.jenkins-ci.org, which proxies all the artifacts that we need -->
   <repositories>
     <repository>
@@ -43,19 +55,15 @@
       <artifactId>mockito-all</artifactId>
       <version>1.9.5</version>
     </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>dashboard-view</artifactId>
+      <version>2.4</version>
+      <optional>true</optional>
+    </dependency>
   </dependencies>
 
   <build>
-    <resources>
-      <resource>
-        <directory>/scratch/ed/pit/src/main/resources</directory>
-      </resource>
-    </resources>
-    <testResources>
-      <testResource>
-        <directory>/scratch/ed/pit/src/main/test</directory>
-      </testResource>
-    </testResources>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -65,6 +73,11 @@
           <source>1.6</source>
           <target>1.6</target>
         </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>2.6</version>
       </plugin>
       <plugin>
         <groupId>org.pitest</groupId>
