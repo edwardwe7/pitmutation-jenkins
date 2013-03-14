@@ -74,9 +74,6 @@
           <targetClasses>
             <param>org.jenkinsci.plugins.pitmutation.*</param>
           </targetClasses>
-          <!--<excludedClasses>-->
-            <!--<param>**/*Test.java</param>-->
-          <!--</excludedClasses>-->
           <targetTests>
             <param>org.jenkinsci.plugins.pitmutation.*</param>
           </targetTests>
