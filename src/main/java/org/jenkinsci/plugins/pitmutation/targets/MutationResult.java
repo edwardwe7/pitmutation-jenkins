@@ -20,9 +20,9 @@ public class MutationResult implements Serializable {
     return action_.getOwner();
   }
 
-  public MutationStats getMutationStats() {
-    return new MutationStats();
-  }
+//  public MutationStats getMutationStats() {
+//    return new MutationStats();
+//  }
 
   public Collection<Mutation> getMutationsForClass(String className) {
     return action_.getReport().getMutationsForClassName(className);
@@ -38,6 +38,15 @@ public class MutationResult implements Serializable {
 
     return targets;
   }
+
+  public Collection<MutationStats> statsForNewTargets() {
+    ArrayList<MutationStats> stats = new ArrayList<MutationStats>();
+    for (String className : findNewTargets()) {
+      stats.add(new MutationStats(action_.getReport().getMutationsForClassName(className)));
+    }
+    return stats;
+  }
+
 
   public Collection<Mutation> findDifferentMutations(String className) {
     MutationReport report = action_.getReport();
