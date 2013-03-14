@@ -2,6 +2,7 @@ package org.jenkinsci.plugins.pitmutation;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 import org.junit.Test;
@@ -14,6 +15,16 @@ import static org.mockito.Mockito.mock;
  * @author edward
  */
 public class MutationReportTest {
+
+  @Test
+  public void countsKills() throws IOException, SAXException {
+    InputStream fileStream = getClass().getResourceAsStream("mutations.xml");
+
+    MutationReport report = new MutationReport(fileStream);
+
+    assertThat(report.getKillRatio(), is(new Ratio(32,329)));
+  }
+
   @Test
   public void canDigestAMutation() throws IOException, SAXException {
     MutationReport report = new MutationReport(new ByteArrayInputStream(MUTATIONS.getBytes()));

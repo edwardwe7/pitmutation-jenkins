@@ -44,7 +44,7 @@ public class MutationReport {
       mutations++;
     }
 
-    killRatio_ = new Ratio(mutations, killed);
+    killRatio_ = new Ratio(killed, mutations);
   }
 
   private Ratio killRatio_;

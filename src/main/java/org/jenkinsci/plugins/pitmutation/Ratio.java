@@ -45,6 +45,8 @@ public class Ratio implements  Comparable<Ratio> {
     }
   }
 
+
+
   /**
    * Gets "x/y" representation.
    */
@@ -58,6 +60,14 @@ public class Ratio implements  Comparable<Ratio> {
       return String.valueOf(i);
     else
       return String.valueOf(f);
+  }
+
+  public boolean equals(Object o) {
+    if (o instanceof Ratio) {
+      Ratio that = (Ratio) o;
+      return this.compareTo(that) == 0;
+    }
+    return false;
   }
 
   private float numerator_ = 0;
