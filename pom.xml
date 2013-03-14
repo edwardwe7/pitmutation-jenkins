@@ -96,6 +96,7 @@
           </mutators>
           <outputFormats>
             <value>XML</value>
+            <value>HTML</value>
           </outputFormats>
         </configuration>
       </plugin>

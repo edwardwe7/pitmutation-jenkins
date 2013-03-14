@@ -58,7 +58,8 @@ public class PitPublisher extends Recorder {
       else {
           listener.getLogger().println("Found report: " + reports[0]);
         try {
-          MutationReport report = new MutationReport(reports[0].read());
+          //get latest report
+          MutationReport report = new MutationReport(reports[reports.length-1].read());
           PitBuildAction action = new PitBuildAction(build, report);
           build.getActions().add(action);
           build.setResult(decideBuildResult(action));
@@ -98,7 +99,6 @@ public class PitPublisher extends Recorder {
 
   private Condition percentageThreshold(final float percentage) {
     return new Condition() {
-      @Override
       public Result decideResult(PitBuildAction action) {
         Ratio killRatio = action.getKillRatio();
         listener_.getLogger().println("Kill ratio is " + killRatio.asPercentage() +"% ("
@@ -110,7 +110,6 @@ public class PitPublisher extends Recorder {
 
   private Condition mustImprove() {
     return new Condition() {
-      @Override
       public Result decideResult(final PitBuildAction action) {
         PitBuildAction previousAction = action.getPreviousAction();
         if (previousAction != null) {
@@ -129,7 +128,6 @@ public class PitPublisher extends Recorder {
     return DESCRIPTOR;
   }
 
-  @Override
   public BuildStepMonitor getRequiredMonitorService() {
     return BuildStepMonitor.BUILD;
   }
