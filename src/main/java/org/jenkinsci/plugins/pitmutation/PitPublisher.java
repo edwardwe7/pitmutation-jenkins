@@ -1,11 +1,9 @@
 package org.jenkinsci.plugins.pitmutation;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.digester3.Digester;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
 
@@ -60,18 +58,18 @@ public class PitPublisher extends Recorder {
         return true;
       }
       else {
+          listener.getLogger().println("Found report: " + reports[0]);
         try {
-          PitParser parser = new PitParser(reports[0]);
-          PitBuildAction action = new PitBuildAction(build, parser.getKillRatio());
+          MutationReport report = new MutationReport(reports[0].read());
+          PitBuildAction action = new PitBuildAction(build, report);
           build.getActions().add(action);
           build.setResult(decideBuildResult(action));
-        } catch (ParserConfigurationException e) {
-          e.printStackTrace(listener.getLogger());
-          build.setResult(Result.FAILURE);
-        } catch (SAXException e) {
-          e.printStackTrace(listener.getLogger());
-          build.setResult(Result.FAILURE);
         }
+        catch (SAXException e) {
+          e.printStackTrace(listener_.getLogger());
+          return false;
+        }
+
       }
     }
     return true;

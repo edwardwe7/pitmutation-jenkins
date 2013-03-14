@@ -13,13 +13,16 @@ import org.xml.sax.SAXException;
  */
 public class MutationReport {
 
-  public MutationReport(PitBuildAction action, InputStream xmlReport) throws IOException, SAXException {
-    action_ = action;
+  public MutationReport(InputStream xmlReport) throws IOException, SAXException {
     digestMutations(xmlReport);
   }
 
   public List<Mutation> getMutations() {
     return this.mutations_;
+  }
+
+  public Ratio getKillRatio() {
+    return this.killRatio_;
   }
 
   private void digestMutations(InputStream input) throws IOException, SAXException {
@@ -31,8 +34,19 @@ public class MutationReport {
     mutations_ = new ArrayList<Mutation>();
     digester.push(mutations_);
     digester.parse(input);
+
+    float killed = 0;
+    float mutations = 0;
+    for (Mutation mutation : mutations_) {
+      if (mutation.isDetected()) {
+          killed++;
+      }
+      mutations++;
+    }
+
+    killRatio_ = new Ratio(mutations, killed);
   }
 
-  private PitBuildAction action_;
+  private Ratio killRatio_;
   private List<Mutation> mutations_ = new ArrayList<Mutation>();
 }

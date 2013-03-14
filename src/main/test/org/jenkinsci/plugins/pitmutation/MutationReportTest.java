@@ -13,11 +13,10 @@ import static org.mockito.Mockito.mock;
 /**
  * @author edward
  */
-public class MutationDigesterTest {
+public class MutationReportTest {
   @Test
   public void canDigestAMutation() throws IOException, SAXException {
-    PitBuildAction mockBuild = mock(PitBuildAction.class);
-    MutationReport report = new MutationReport(mockBuild, new ByteArrayInputStream(MUTATIONS.getBytes()));
+    MutationReport report = new MutationReport(new ByteArrayInputStream(MUTATIONS.getBytes()));
 
     List<Mutation> mutations = report.getMutations();
 

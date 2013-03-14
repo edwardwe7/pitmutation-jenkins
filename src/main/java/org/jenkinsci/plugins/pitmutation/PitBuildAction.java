@@ -12,9 +12,10 @@ import hudson.model.HealthReportingAction;
  */
 public class PitBuildAction implements HealthReportingAction, StaplerProxy {
 
-  public PitBuildAction(AbstractBuild<?,?> owner, Ratio killRatio) {
+  public PitBuildAction(AbstractBuild<?,?> owner, MutationReport report) {
     owner_ = owner;
-    killRatio_ = killRatio;
+    report_ = report;
+    killRatio_ = report.getKillRatio();
   }
 
   public PitBuildAction getPreviousAction() {
@@ -56,6 +57,7 @@ public class PitBuildAction implements HealthReportingAction, StaplerProxy {
   }
 
   private AbstractBuild<?, ?> owner_;
+  private MutationReport report_;
   private Ratio killRatio_;
   private Ratio failThreshold_;
 }
