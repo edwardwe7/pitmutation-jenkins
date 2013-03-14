@@ -33,12 +33,20 @@ public class PitBuildAction implements HealthReportingAction, StaplerProxy {
     }
   }
 
+  public AbstractBuild<?,?> getOwner() {
+    return owner_;
+  }
+
   public MutationResult getTarget() {
     return getResult();
   }
 
   public MutationResult getResult() {
-    return report_.getMutationResult(owner_);
+    return new MutationResult(this);
+  }
+
+  public MutationReport getReport() {
+    return report_;
   }
 
   public Ratio getKillRatio() {
@@ -57,7 +65,7 @@ public class PitBuildAction implements HealthReportingAction, StaplerProxy {
   }
 
   public String getIconFileName() {
-    return "/plugin/pit/donatello.png";
+    return "/plugin/pitmutation/donatello.png";
   }
 
   public String getDisplayName() {
@@ -72,4 +80,6 @@ public class PitBuildAction implements HealthReportingAction, StaplerProxy {
   private AbstractBuild<?, ?> owner_;
   private MutationReport report_;
   private Ratio failThreshold_;
+
+
 }

@@ -9,11 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.digester3.Digester;
-import org.jenkinsci.plugins.pitmutation.targets.MutationResult;
+import org.apache.commons.digester.Digester;
 import org.xml.sax.SAXException;
-
-import hudson.model.AbstractBuild;
 
 /**
  * @author edward
@@ -71,10 +68,6 @@ public class MutationReport {
       mutationsByClass_.put(className, mutationSet);
     }
     mutationSet.add(mutation);
-  }
-
-  public MutationResult getMutationResult(AbstractBuild owner) {
-    return new MutationResult(owner);
   }
 
   private Map<String, Set<Mutation>> mutationsByClass_;

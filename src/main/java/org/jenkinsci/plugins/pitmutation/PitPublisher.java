@@ -164,7 +164,7 @@ public class PitPublisher extends Recorder {
      */
     @Override
     public boolean configure(StaplerRequest req, JSONObject formData) throws FormException {
-      req.bindParameters(this, "pitmutation.");
+      req.bindParameters(this, "pitmutation");
       save();
       return super.configure(req, formData);
     }

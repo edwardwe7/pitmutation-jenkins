@@ -39,14 +39,7 @@ public class MutationReportTest {
     assertThat(mutations.size(), is(19));
   }
 
-  @Test
-  public void countsDifferentMutationsByBuild() throws IOException, SAXException {
-    MutationReport reportOld = new MutationReport(mutationsXml_[0]);
-    MutationReport reportNew = new MutationReport(mutationsXml_[1]);
 
-    Set<Mutation> mutations = reportNew.getMutationsForClassName("org.jenkinsci.plugins.pitmutation.MutationReport");
-    assertThat(mutations.size(), is(28));
-  }
 
   @Test
   public void canDigestAMutation() throws IOException, SAXException {

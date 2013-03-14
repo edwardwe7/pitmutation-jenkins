@@ -3,7 +3,7 @@
     <l:layout>
         <st:include it="${it.owner}" page="sidepanel.jelly"/>
         <l:main-panel>
-            <h1>${%Code Coverage}</h1>
+            <h1>${%Mutations}</h1>
             <j:forEach var="parent" items="${it.parents}">
                 <a href="${it.relativeUrl(parent)}">${parent.xmlTransform(parent.name)}</a>
                 &gt;

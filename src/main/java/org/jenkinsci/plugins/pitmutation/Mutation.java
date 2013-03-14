@@ -94,6 +94,10 @@ public class Mutation {
     killedTest_ = killedTest;
   }
 
+  public String toString() {
+    return file_ + ":" + lineNumber_ + " : " + status_ + " type:[" + mutator_ +"]";
+  }
+
   enum Status {
     KILLED,
     NO_COVERAGE
