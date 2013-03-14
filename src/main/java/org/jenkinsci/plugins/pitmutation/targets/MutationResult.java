@@ -24,6 +24,10 @@ public class MutationResult implements Serializable {
     return new MutationStats();
   }
 
+  public Collection<Mutation> getMutationsForClass(String className) {
+    return action_.getReport().getMutationsForClassName(className);
+  }
+
   public Collection<String> findNewTargets() {
     MutationReport report = action_.getReport();
     MutationReport previous = action_.getPreviousAction().getReport();
