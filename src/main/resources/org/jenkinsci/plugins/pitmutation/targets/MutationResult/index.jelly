@@ -17,8 +17,18 @@
             </table>
 
             <h1>New Survivors</h1>
-            <j:forEach var="mutatedClasses" items="${it.classesWithNewSurvivors}">
-                ${mutatedClasses.sourceFileContent}
+            <j:forEach var="mutatedClass" items="${it.classesWithNewSurvivors}">
+                <h2>${mutatedClass.name}</h2>
+                <table>
+                <tr><th>Line</th><th>Mutations</th></tr>
+                <j:forEach var="line" items="${mutatedClass.lineAggregations}">
+                <tr>
+                  <td>${line}</td>
+                  <td>x ${mutatedClass.numberOfMutationsOn(line)}</td>
+                </tr>
+                </j:forEach>
+                </table>
+${mutatedClass.sourceFileContent}
             </j:forEach>
         </l:main-panel>
     </l:layout>

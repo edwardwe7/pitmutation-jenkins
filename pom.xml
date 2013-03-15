@@ -3,12 +3,12 @@
   <parent>
     <groupId>org.jenkins-ci.plugins</groupId>
     <artifactId>plugin</artifactId>
-    <version>1.474</version><!-- which version of Jenkins is this plugin built against? -->
+    <version>1.505</version><!-- which version of Jenkins is this plugin built against? -->
   </parent>
 
   <groupId>org.jenkins-ci.plugins</groupId>
   <artifactId>pitmutation</artifactId>
-  <version>1.0-4</version>
+  <version>1.0-5</version>
   <name>Jenkins PIT Mutation Plugin</name>
   <packaging>hpi</packaging>
 
