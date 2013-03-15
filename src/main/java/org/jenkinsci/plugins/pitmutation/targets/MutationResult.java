@@ -27,8 +27,8 @@ public class MutationResult implements Serializable {
   }
 
   public Collection<String> findNewTargets() {
-    Set<String> targets = new HashSet<String>(report_.sourceFilenames());
-    targets.removeAll(previous_.sourceFilenames());
+    Set<String> targets = new HashSet<String>(report_.sourceClasses());
+    targets.removeAll(previous_.sourceClasses());
     return targets;
   }
 
@@ -40,6 +40,17 @@ public class MutationResult implements Serializable {
     return stats;
   }
 
+  public Collection<String> getClassesWithNewSurvivors() {
+    ArrayList<String> classes = new ArrayList<String>();
+
+    for (String className : report_.sourceClasses()) {
+      if (getNewSurvivors(className).size() > 0) {
+        classes.add(className);
+      }
+    }
+
+    return classes;
+  }
 
   public Collection<Mutation> getDifferentMutations(String className) {
     Set<Mutation> mutations = new HashSet<Mutation>(report_.getMutationsForClassName(className));

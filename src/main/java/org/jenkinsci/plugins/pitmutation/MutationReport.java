@@ -30,12 +30,13 @@ public class MutationReport {
     return this.killRatio_;
   }
 
-  public Set<String> sourceFilenames() {
+  public Set<String> sourceClasses() {
     return mutationsByClass_.keySet();
   }
 
   public Set<Mutation> getMutationsForClassName(String className) {
-    return mutationsByClass_.get(className);
+    Set<Mutation> mutations = mutationsByClass_.get(className);
+    return mutations != null ? EMPTY_SET : mutations;
   }
 
   private void digestMutations(InputStream input) throws IOException, SAXException {
@@ -70,6 +71,7 @@ public class MutationReport {
     mutationSet.add(mutation);
   }
 
+  private static final Set<Mutation> EMPTY_SET = new HashSet<Mutation>();
   private Map<String, Set<Mutation>> mutationsByClass_;
   private Ratio killRatio_ = new Ratio(0,0);
   private List<Mutation> mutations_ = new ArrayList<Mutation>();

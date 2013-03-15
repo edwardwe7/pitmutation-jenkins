@@ -14,6 +14,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author edward
@@ -53,11 +55,17 @@ public class PitBuildAction implements HealthReportingAction, StaplerProxy {
 
   public MutationReport getReport() {
     try {
-      return new MutationReport(new FileInputStream(owner_.getRootDir().listFiles(new FilenameFilter() {
+      File files[] = owner_.getRootDir().listFiles(new FilenameFilter() {
         public boolean accept(File file, String name) {
           return "mutations.xml".equals(name);
         }
-      })[0]));
+      });
+
+      if (files.length < 1) {
+        logger.log(Level.WARNING, "Could not find mutations.xml in " + owner_.getRootDir());
+      }
+
+      return new MutationReport(new FileInputStream(files[0]));
     } catch (IOException e) {
       e.printStackTrace();
     } catch (SAXException e) {
@@ -71,8 +79,8 @@ public class PitBuildAction implements HealthReportingAction, StaplerProxy {
   }
 
   public HealthReport getBuildHealth() {
-    return new HealthReport((int) report_.getKillRatio().asPercentage(),
-            Messages._BuildAction_Description(report_.getKillRatio()));
+    return new HealthReport((int) getReport().getKillRatio().asPercentage(),
+            Messages._BuildAction_Description(getReport().getKillRatio()));
   }
 
   public String getIconFileName() {
@@ -86,6 +94,8 @@ public class PitBuildAction implements HealthReportingAction, StaplerProxy {
   public String getUrlName() {
     return "pitmutation";
   }
+
+  private static final Logger logger = Logger.getLogger(PitBuildAction.class.getName());
 
   private AbstractBuild<?, ?> owner_;
   private MutationReport report_;
