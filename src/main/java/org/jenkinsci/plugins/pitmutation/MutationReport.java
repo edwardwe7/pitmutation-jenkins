@@ -36,7 +36,7 @@ public class MutationReport {
 
   public Set<Mutation> getMutationsForClassName(String className) {
     Set<Mutation> mutations = mutationsByClass_.get(className);
-    return mutations != null ? EMPTY_SET : mutations;
+    return mutations != null ? mutations : EMPTY_SET;
   }
 
   private void digestMutations(InputStream input) throws IOException, SAXException {
