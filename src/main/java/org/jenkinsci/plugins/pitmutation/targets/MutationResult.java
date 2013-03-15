@@ -18,6 +18,9 @@ public class MutationResult implements Serializable {
     owner_ = action.getOwner();
     report_ = action.getReport();
     previous_ = action.getPreviousAction().getReport();
+    if (previous_ == null) {
+      previous_ = MutationReport.createEmptyReport();
+    }
   }
 
   public MutationStats getOverallStats() {
@@ -68,8 +71,6 @@ public class MutationResult implements Serializable {
         survivors.add(m);
       }
     }
-
-    logger.log(Level.WARNING, "Found " + survivors.size() + " in " + className);
 
     return survivors;
   }

@@ -18,8 +18,16 @@ import org.xml.sax.SAXException;
 public class MutationReport {
 
   public MutationReport(InputStream xmlReport) throws IOException, SAXException {
-    mutationsByClass_ = new HashMap<String, Set<Mutation>>();
+    this();
     digestMutations(xmlReport);
+  }
+
+  private MutationReport() {
+    mutationsByClass_ = new HashMap<String, Set<Mutation>>();
+  }
+
+  public static MutationReport createEmptyReport() {
+    return new MutationReport();
   }
 
   public List<Mutation> getMutations() {

@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import hudson.model.AbstractBuild;
 import hudson.util.TextFile;
@@ -47,15 +48,18 @@ public class MutatedClass {
 
   public String getSourceFileContent() {
     try {
-      return new TextFile(new File(owner_.getRootDir(), "mutation-reports/" + package_ + File.pathSeparator + fileName_)).read();
+      return new TextFile(new File(owner_.getRootDir(), "mutation-reports/" + package_ + File.separator + fileName_)).read();
     }
     catch (IOException exception) {
-      return "Could not read file.";
+      return "Could not read source file.";
     }
   }
 
   public Collection<Mutation> getMutations() {
     return mutations_;
   }
+
+  private static final Logger logger = Logger.getLogger(MutationResult.class.getName());
+
 
 }
