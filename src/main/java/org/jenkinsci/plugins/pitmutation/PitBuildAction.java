@@ -1,5 +1,6 @@
 package org.jenkinsci.plugins.pitmutation;
 
+import hudson.FilePath;
 import hudson.model.Result;
 
 import org.jenkinsci.plugins.pitmutation.targets.MutationResult;
@@ -55,20 +56,18 @@ public class PitBuildAction implements HealthReportingAction, StaplerProxy {
 
   public MutationReport getReport() {
     try {
-      File files[] = owner_.getRootDir().listFiles(new FilenameFilter() {
-        public boolean accept(File file, String name) {
-          return "mutations.xml".equals(name);
-        }
-      });
+      FilePath[] files = new FilePath(new FilePath(owner_.getRootDir()), "mutation-reports").list("mutations.xml");
 
       if (files.length < 1) {
         logger.log(Level.WARNING, "Could not find mutations.xml in " + owner_.getRootDir());
       }
 
-      return new MutationReport(new FileInputStream(files[0]));
+      return new MutationReport(files[0].read());
     } catch (IOException e) {
       e.printStackTrace();
     } catch (SAXException e) {
+      e.printStackTrace();
+    } catch (InterruptedException e) {
       e.printStackTrace();
     }
     return null;

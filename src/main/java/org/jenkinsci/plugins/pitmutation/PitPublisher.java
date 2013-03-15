@@ -49,22 +49,21 @@ public class PitPublisher extends Recorder {
     if (build.getResult().isBetterOrEqualTo(Result.SUCCESS)) {
       listener_.getLogger().println("Looking for PIT report in " + build.getModuleRoot().getRemote());
 
-      FilePath[] reports = locateMutationReports(build.getModuleRoot());
+      FilePath reportDir = locateMutationReports(build.getModuleRoot());
 
-      if (reports.length == 0) {
+      if (reportDir == null) {
         listener_.getLogger().println("No PIT mutation reports found. Searched '" + getMutationStatsFile() + "'.");
         build.setResult(Result.FAILURE);
         return true;
       }
-      else {
-        listener.getLogger().println("Found report: " + reports[0]);
-        //publish latest report
-        final FilePath targetPath = new FilePath(new FilePath(build.getRootDir()), "mutations.xml");
-        reports[reports.length-1].copyTo(targetPath);
-        PitBuildAction action = new PitBuildAction(build);
-        build.getActions().add(action);
-        build.setResult(decideBuildResult(action));
-      }
+
+      listener_.getLogger().println("Found report dir: " + reportDir);
+      //publish latest reports
+      reportDir.copyRecursiveTo(new FilePath(new FilePath(build.getRootDir()), "mutation-reports"));
+
+      PitBuildAction action = new PitBuildAction(build);
+      build.getActions().add(action);
+      build.setResult(decideBuildResult(action));
     }
     return true;
   }
@@ -128,17 +127,19 @@ public class PitPublisher extends Recorder {
     return BuildStepMonitor.BUILD;
   }
 
-//  static File[] getPitReports(AbstractBuild<?, ?> build) {
-//    return build.getRootDir().listFiles(COBERTURA_FILENAME_FILTER);
-//  }
-
-  private FilePath[] locateMutationReports(FilePath root) throws IOException, InterruptedException {
-     return root.list(mutationStatsFile_);
+  private FilePath locateMutationReports(FilePath root) throws IOException, InterruptedException {
+    FilePath reportsDir = new FilePath(root, mutationStatsFile_);
+    List<FilePath> dirs = reportsDir.listDirectories();
+    if (dirs.size() > 0) {
+      return dirs.get(dirs.size()-1);
+    }
+    else {
+      return null;
+    }
   }
 
   private List<Condition> buildConditions_;
   private String mutationStatsFile_;
-  private String mutationResultsFile_;
   private boolean killRatioMustImprove_;
   private float minimumKillRatio_;
   private transient BuildListener listener_;

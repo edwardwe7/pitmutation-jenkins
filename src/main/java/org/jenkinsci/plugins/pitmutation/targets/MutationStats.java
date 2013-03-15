@@ -17,6 +17,8 @@ public class MutationStats {
         undetected_++;
       }
     }
+
+    total_ = mutations.size();
   }
 
   public String getTitle() {
@@ -27,7 +29,12 @@ public class MutationStats {
     return undetected_;
   }
 
+  public int getTotalMutations() {
+    return total_;
+  }
+
   private String title_;
   private int undetected_ = 0;
+  private int total_;
 }
 

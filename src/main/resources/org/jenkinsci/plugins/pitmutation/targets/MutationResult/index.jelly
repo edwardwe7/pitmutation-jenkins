@@ -3,6 +3,8 @@
     <l:layout>
         <st:include it="${it.owner}" page="sidepanel.jelly"/>
         <l:main-panel>
+            <h1>Mutation Stats</h1>
+            <p>Mutations Performed: ${it.totalMutatations}</p>
             <h1>New Mutation Targets</h1>
             <table>
             <tr><th>Class</th><th>Undetected</th></tr>

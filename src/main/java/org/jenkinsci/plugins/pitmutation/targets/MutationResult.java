@@ -20,8 +20,8 @@ public class MutationResult implements Serializable {
     previous_ = action.getPreviousAction().getReport();
   }
 
-  public AbstractBuild getOwner() {
-    return owner_;
+  public MutationStats getOverallStats() {
+    return new MutationStats("ALL", report_.getMutations());
   }
 
   public Collection<Mutation> getMutationsForClass(String className) {
@@ -72,6 +72,10 @@ public class MutationResult implements Serializable {
     logger.log(Level.WARNING, "Found " + survivors.size() + " in " + className);
 
     return survivors;
+  }
+
+  public AbstractBuild getOwner() {
+    return owner_;
   }
 
   private static final Logger logger = Logger.getLogger(MutationResult.class.getName());
