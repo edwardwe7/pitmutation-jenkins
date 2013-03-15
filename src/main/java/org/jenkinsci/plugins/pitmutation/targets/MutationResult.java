@@ -48,7 +48,7 @@ public class MutationResult implements Serializable {
     for (String className : report_.sourceClasses()) {
       Collection<Mutation> mutations = getNewSurvivors(className);
       if (mutations.size() > 0) {
-        classes.add(new MutatedClass(className, mutations));
+        classes.add(new MutatedClass(owner_, className, mutations));
       }
     }
     return classes;
