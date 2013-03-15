@@ -10,7 +10,8 @@ import java.util.Collection;
  * Time: 21:49
  */
 public class MutationStats {
-  public MutationStats(Collection<Mutation> mutations) {
+  public MutationStats(String title, Collection<Mutation> mutations) {
+    title_ = title;
     for (Mutation m : mutations) {
       if (!m.isDetected()) {
         undetected_++;
@@ -18,10 +19,15 @@ public class MutationStats {
     }
   }
 
-  public int countUndetected() {
+  public String getTitle() {
+    return title_;
+  }
+
+  public int getUndetected() {
     return undetected_;
   }
 
+  private String title_;
   private int undetected_ = 0;
 }
 

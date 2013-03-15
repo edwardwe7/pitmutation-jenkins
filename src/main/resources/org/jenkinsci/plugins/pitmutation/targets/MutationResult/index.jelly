@@ -4,13 +4,19 @@
         <st:include it="${it.owner}" page="sidepanel.jelly"/>
         <l:main-panel>
             <h1>New Mutation Targets</h1>
+            <table>
+            <th><td>Class</td><td>Undetected</td></th>
             <j:forEach var="stat" items="${it.statsForNewTargets}">
-                <p>${it.countUndetected}</p>
+            <tr>
+            <td>${stat.title}</td>
+            <td>${stat.undetected}</td>
+            </tr>
             </j:forEach>
+            </table>
 
             <h1>New Survivors</h1>
             <table>
-            <j:forEach var="mutation" items="${it.findNewSurvivors}">
+            <j:forEach var="mutation" items="${it.newSurvivors}">
               <tr>
               <td>${mutation.status}</td>
               </tr>

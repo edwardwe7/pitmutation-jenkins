@@ -1,5 +1,6 @@
 package org.jenkinsci.plugins.pitmutation;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -56,18 +57,13 @@ public class PitPublisher extends Recorder {
         return true;
       }
       else {
-          listener.getLogger().println("Found report: " + reports[0]);
-        try {
-          //get latest report
-          MutationReport report = new MutationReport(reports[reports.length-1].read());
-          PitBuildAction action = new PitBuildAction(build, report);
-          build.getActions().add(action);
-          build.setResult(decideBuildResult(action));
-        }
-        catch (SAXException e) {
-          e.printStackTrace(listener_.getLogger());
-          return false;
-        }
+        listener.getLogger().println("Found report: " + reports[0]);
+        //publish latest report
+        final FilePath targetPath = new FilePath(new FilePath(build.getRootDir()), "mutations.xml");
+        reports[reports.length-1].copyTo(targetPath);
+        PitBuildAction action = new PitBuildAction(build);
+        build.getActions().add(action);
+        build.setResult(decideBuildResult(action));
       }
     }
     return true;
@@ -131,6 +127,10 @@ public class PitPublisher extends Recorder {
   public BuildStepMonitor getRequiredMonitorService() {
     return BuildStepMonitor.BUILD;
   }
+
+//  static File[] getPitReports(AbstractBuild<?, ?> build) {
+//    return build.getRootDir().listFiles(COBERTURA_FILENAME_FILTER);
+//  }
 
   private FilePath[] locateMutationReports(FilePath root) throws IOException, InterruptedException {
      return root.list(mutationStatsFile_);

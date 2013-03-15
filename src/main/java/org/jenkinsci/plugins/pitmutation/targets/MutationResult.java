@@ -13,55 +13,44 @@ import org.jenkinsci.plugins.pitmutation.PitBuildAction;
  */
 public class MutationResult implements Serializable {
   public MutationResult(PitBuildAction action) {
-    action_ = action;
+    owner_ = action.getOwner();
+    report_ = action.getReport();
+    previous_ = action.getPreviousAction().getReport();
   }
 
   public AbstractBuild getOwner() {
-    return action_.getOwner();
+    return owner_;
   }
 
-//  public MutationStats getMutationStats() {
-//    return new MutationStats();
-//  }
-
   public Collection<Mutation> getMutationsForClass(String className) {
-    return action_.getReport().getMutationsForClassName(className);
+    return report_.getMutationsForClassName(className);
   }
 
   public Collection<String> findNewTargets() {
-    MutationReport report = action_.getReport();
-    MutationReport previous = action_.getPreviousAction().getReport();
-
-    Set<String> targets = new HashSet<String>(report.sourceFilenames());
-
-    targets.removeAll(previous.sourceFilenames());
-
+    Set<String> targets = new HashSet<String>(report_.sourceFilenames());
+    targets.removeAll(previous_.sourceFilenames());
     return targets;
   }
 
-  public Collection<MutationStats> statsForNewTargets() {
+  public Collection<MutationStats> getStatsForNewTargets() {
     ArrayList<MutationStats> stats = new ArrayList<MutationStats>();
     for (String className : findNewTargets()) {
-      stats.add(new MutationStats(action_.getReport().getMutationsForClassName(className)));
+      stats.add(new MutationStats(className, report_.getMutationsForClassName(className)));
     }
     return stats;
   }
 
 
-  public Collection<Mutation> findDifferentMutations(String className) {
-    MutationReport report = action_.getReport();
-    MutationReport previous = action_.getPreviousAction().getReport();
-
-    Set<Mutation> mutations = new HashSet<Mutation>(report.getMutationsForClassName(className));
-
-    mutations.removeAll(previous.getMutationsForClassName(className));
+  public Collection<Mutation> getDifferentMutations(String className) {
+    Set<Mutation> mutations = new HashSet<Mutation>(report_.getMutationsForClassName(className));
+    mutations.removeAll(previous_.getMutationsForClassName(className));
     return mutations;
   }
 
-  public Collection<Mutation> findNewSurvivors(String className) {
+  public Collection<Mutation> getNewSurvivors(String className) {
     Collection<Mutation> survivors = new ArrayList<Mutation>();
 
-    for (Mutation m : findDifferentMutations(className)) {
+    for (Mutation m : getDifferentMutations(className)) {
       if (!m.isDetected()) {
         survivors.add(m);
       }
@@ -70,5 +59,7 @@ public class MutationResult implements Serializable {
     return survivors;
   }
 
-  private PitBuildAction action_;
+  private MutationReport report_;
+  private MutationReport previous_;
+  private AbstractBuild owner_;
 }

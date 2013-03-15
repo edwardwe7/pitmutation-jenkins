@@ -8,15 +8,21 @@ import org.kohsuke.stapler.StaplerProxy;
 import hudson.model.AbstractBuild;
 import hudson.model.HealthReport;
 import hudson.model.HealthReportingAction;
+import org.xml.sax.SAXException;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FilenameFilter;
+import java.io.IOException;
 
 /**
  * @author edward
  */
 public class PitBuildAction implements HealthReportingAction, StaplerProxy {
 
-  public PitBuildAction(AbstractBuild<?,?> owner, MutationReport report) {
+  public PitBuildAction(AbstractBuild<?,?> owner) {
     owner_ = owner;
-    report_ = report;
+    report_ = getReport();
   }
 
   public PitBuildAction getPreviousAction() {
@@ -46,7 +52,18 @@ public class PitBuildAction implements HealthReportingAction, StaplerProxy {
   }
 
   public MutationReport getReport() {
-    return report_;
+    try {
+      return new MutationReport(new FileInputStream(owner_.getRootDir().listFiles(new FilenameFilter() {
+        public boolean accept(File file, String name) {
+          return "mutations.xml".equals(name);
+        }
+      })[0]));
+    } catch (IOException e) {
+      e.printStackTrace();
+    } catch (SAXException e) {
+      e.printStackTrace();
+    }
+    return null;
   }
 
   public Ratio getKillRatio() {
@@ -54,12 +71,6 @@ public class PitBuildAction implements HealthReportingAction, StaplerProxy {
   }
 
   public HealthReport getBuildHealth() {
-    if (report_ == null) {
-      return new HealthReport(1000000, "report was null");
-    }
-    if (report_.getKillRatio() == null) {
-      return new HealthReport(1000000, "ratio was null");
-    }
     return new HealthReport((int) report_.getKillRatio().asPercentage(),
             Messages._BuildAction_Description(report_.getKillRatio()));
   }
@@ -76,10 +87,6 @@ public class PitBuildAction implements HealthReportingAction, StaplerProxy {
     return "pitmutation";
   }
 
-
   private AbstractBuild<?, ?> owner_;
   private MutationReport report_;
-  private Ratio failThreshold_;
-
-
 }
