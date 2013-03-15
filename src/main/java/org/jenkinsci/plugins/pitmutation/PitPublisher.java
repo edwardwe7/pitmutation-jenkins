@@ -1,6 +1,5 @@
 package org.jenkinsci.plugins.pitmutation;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +19,6 @@ import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
 import hudson.tasks.Recorder;
 import net.sf.json.JSONObject;
-import org.xml.sax.SAXException;
 
 /**
  * @author edward
@@ -49,23 +47,41 @@ public class PitPublisher extends Recorder {
     if (build.getResult().isBetterOrEqualTo(Result.SUCCESS)) {
       listener_.getLogger().println("Looking for PIT report in " + build.getModuleRoot().getRemote());
 
-      FilePath reportDir = locateMutationReports(build.getModuleRoot());
+      FilePath reportDir = getReportDir(build.getModuleRoot());
 
-      if (reportDir == null) {
-        listener_.getLogger().println("No PIT mutation reports found. Searched '" + getMutationStatsFile() + "'.");
+      if (!mutationsReportExists(reportDir)) {
+        listener_.getLogger().println("No PIT mutation reports found. Searched '" + reportDir + "'.");
         build.setResult(Result.FAILURE);
         return true;
       }
 
-      listener_.getLogger().println("Found report dir: " + reportDir);
+      FilePath[] search = reportDir.list("**/mutations.xml");
+      listener_.getLogger().println("Found report dir: " + search[0].getParent());
+
       //publish latest reports
-      reportDir.copyRecursiveTo(new FilePath(new FilePath(build.getRootDir()), "mutation-reports"));
+      search[0].getParent().copyRecursiveTo(new FilePath(new FilePath(build.getRootDir()), "mutation-reports"));
 
       PitBuildAction action = new PitBuildAction(build);
       build.getActions().add(action);
       build.setResult(decideBuildResult(action));
     }
     return true;
+  }
+
+  private boolean mutationsReportExists(FilePath reportDir) {
+    if (reportDir == null) {
+      return false;
+    }
+    try {
+      FilePath[] search = reportDir.list("**/mutations.xml");
+      return search.length > 0;
+    }
+    catch (IOException e) {
+      return false;
+    }
+    catch (InterruptedException e) {
+      return false;
+    }
   }
 
   /**
@@ -127,14 +143,13 @@ public class PitPublisher extends Recorder {
     return BuildStepMonitor.BUILD;
   }
 
-  private FilePath locateMutationReports(FilePath root) throws IOException, InterruptedException {
+  private FilePath getReportDir(FilePath root) throws IOException, InterruptedException {
     FilePath reportsDir = new FilePath(root, mutationStatsFile_);
-    List<FilePath> dirs = reportsDir.listDirectories();
-    if (dirs.size() > 0) {
-      return dirs.get(dirs.size()-1);
+    if (reportsDir.isDirectory()) {
+      return reportsDir;
     }
     else {
-      return null;
+      return reportsDir.getParent();
     }
   }
 

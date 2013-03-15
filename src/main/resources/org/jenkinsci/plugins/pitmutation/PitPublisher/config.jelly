@@ -12,9 +12,6 @@
   <f:entry title="Mutation Statistics" field="mutationStatsFile">
     <f:textbox />
   </f:entry>
-  <f:entry title="Mutation Reports" field="mutationReportsDir">
-    <f:textbox/>
-  </f:entry>
   <f:entry
           title="Minimum Kill %"
           field="minimumKillRatio"
