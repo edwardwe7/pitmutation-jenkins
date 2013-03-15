@@ -12,4 +12,4 @@ that a clean target is executed before building, otherwise PIT will
 keep all of the old reports and it may not pick up the right one.
 
 The report will display some statistics and details of all new surviving 
-mutations and coverage gaps that occurred since the last build, using the stan
+mutations and coverage gaps that occurred since the last build.
