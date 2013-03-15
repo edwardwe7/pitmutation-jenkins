@@ -5,7 +5,7 @@
         <l:main-panel>
             <h1>New Mutation Targets</h1>
             <table>
-            <th><td>Class</td><td>Undetected</td></th>
+            <tr><th>Class</th><th>Undetected</th></tr>
             <j:forEach var="stat" items="${it.statsForNewTargets}">
             <tr>
             <td>${stat.title}</td>
