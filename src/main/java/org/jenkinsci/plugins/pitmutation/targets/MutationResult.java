@@ -2,6 +2,8 @@ package org.jenkinsci.plugins.pitmutation.targets;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import hudson.model.AbstractBuild;
 import org.jenkinsci.plugins.pitmutation.Mutation;
@@ -40,15 +42,15 @@ public class MutationResult implements Serializable {
     return stats;
   }
 
-  public Collection<String> getClassesWithNewSurvivors() {
-    ArrayList<String> classes = new ArrayList<String>();
+  public Collection<MutatedClass> getClassesWithNewSurvivors() {
+    ArrayList<MutatedClass> classes = new ArrayList<MutatedClass>();
 
     for (String className : report_.sourceClasses()) {
-      if (getNewSurvivors(className).size() > 0) {
-        classes.add(className);
+      Collection<Mutation> mutations = getNewSurvivors(className);
+      if (mutations.size() > 0) {
+        classes.add(new MutatedClass(className, mutations));
       }
     }
-
     return classes;
   }
 
@@ -59,7 +61,7 @@ public class MutationResult implements Serializable {
   }
 
   public Collection<Mutation> getNewSurvivors(String className) {
-    Collection<Mutation> survivors = new ArrayList<Mutation>();
+    ArrayList<Mutation> survivors = new ArrayList<Mutation>();
 
     for (Mutation m : getDifferentMutations(className)) {
       if (!m.isDetected()) {
@@ -67,8 +69,12 @@ public class MutationResult implements Serializable {
       }
     }
 
+    logger.log(Level.WARNING, "Found " + survivors.size() + " in " + className);
+
     return survivors;
   }
+
+  private static final Logger logger = Logger.getLogger(MutationResult.class.getName());
 
   private MutationReport report_;
   private MutationReport previous_;

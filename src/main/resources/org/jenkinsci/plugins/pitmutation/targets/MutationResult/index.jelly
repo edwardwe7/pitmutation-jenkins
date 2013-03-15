@@ -15,10 +15,10 @@
             </table>
 
             <h1>New Survivors</h1>
-            <j:forEach var="className" items="${it.classesWithNewSurvivors}">
-                <h2>${className}</h2>
+            <j:forEach var="mutatedClasses" items="${it.classesWithNewSurvivors}">
+                <h2>${mutatedClasses.name}</h2>
                 <table>
-                <j:forEach var="mutation" items="${it.newSurvivors(className)}">
+                <j:forEach var="mutation" items="${mutatedClasses.mutations}">
                 <tr>
                   <td>${mutation.lineNumber}</td>
                   <td>${mutation.status}</td>
