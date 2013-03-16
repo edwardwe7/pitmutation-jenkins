@@ -30,14 +30,14 @@ public class MutationReportTest {
   @Test
   public void countsKills() throws IOException, SAXException {
     MutationReport report = new MutationReport(mutationsXml_[0]);
-    assertThat(report.getKillRatio(), is(new Ratio(32,329)));
+    assertThat(report.getKillRatio(), is(new Ratio(5,16)));
   }
 
   @Test
   public void sortsMutationsByClassName() throws IOException, SAXException {
     MutationReport report = new MutationReport(mutationsXml_[0]);
     Collection<Mutation> mutations = report.getMutationsForClassName("org.jenkinsci.plugins.pitmutation.MutationReport");
-    assertThat(mutations.size(), is(31));
+    assertThat(mutations.size(), is(5));
   }
 
   @Test
