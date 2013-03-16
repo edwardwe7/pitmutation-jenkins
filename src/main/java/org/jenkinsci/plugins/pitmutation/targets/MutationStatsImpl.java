@@ -9,7 +9,7 @@ import java.util.Collection;
  * Date: 14/03/13
  * Time: 21:49
  */
-public class MutationStatsImpl implements MutationStats {
+public class MutationStatsImpl extends MutationStats {
   public MutationStatsImpl(String title, Collection<Mutation> mutations) {
     title_ = title;
     for (Mutation m : mutations) {

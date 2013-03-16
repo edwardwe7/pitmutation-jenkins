@@ -29,6 +29,10 @@ public class MutationResult implements Serializable {
     return report_.getMutationStats();
   }
 
+  public MutationStats getStatsDelta() {
+    return report_.getMutationStats().delta(previous_.getMutationStats());
+  }
+
   public Collection<Mutation> getMutationsForClass(String className) {
     return report_.getMutationsForClassName(className);
   }
