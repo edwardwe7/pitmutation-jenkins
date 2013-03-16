@@ -2,9 +2,10 @@ package org.jenkinsci.plugins.pitmutation.targets;
 
 import java.io.Serializable;
 import java.util.*;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.google.common.base.Function;
+import com.google.common.collect.*;
 import hudson.model.AbstractBuild;
 import org.jenkinsci.plugins.pitmutation.Mutation;
 import org.jenkinsci.plugins.pitmutation.MutationReport;
@@ -14,6 +15,7 @@ import org.jenkinsci.plugins.pitmutation.PitBuildAction;
  * @author edward
  */
 public class MutationResult implements Serializable {
+
   public MutationResult(PitBuildAction action) {
     owner_ = action.getOwner();
     report_ = action.getReport();
@@ -24,60 +26,51 @@ public class MutationResult implements Serializable {
   }
 
   public MutationStats getOverallStats() {
-    return new MutationStats("ALL", report_.getMutations());
+    return report_.getMutationStats();
   }
 
   public Collection<Mutation> getMutationsForClass(String className) {
     return report_.getMutationsForClassName(className);
   }
 
-  public Collection<String> findNewTargets() {
-    Set<String> targets = new HashSet<String>(report_.sourceClasses());
-    targets.removeAll(previous_.sourceClasses());
-    return targets;
-  }
-
   public Collection<MutationStats> getStatsForNewTargets() {
-    ArrayList<MutationStats> stats = new ArrayList<MutationStats>();
-    for (String className : findNewTargets()) {
-      stats.add(new MutationStats(className, report_.getMutationsForClassName(className)));
-    }
-    return stats;
+    return Maps.transformEntries(
+            Maps.difference(
+                    report_.getMutationsByClass().asMap(),
+                    previous_.getMutationsByClass().asMap())
+                    .entriesOnlyOnLeft(),
+            statsTransformer_).values();
   }
 
   public Collection<MutatedClass> getClassesWithNewSurvivors() {
-    ArrayList<MutatedClass> classes = new ArrayList<MutatedClass>();
+    Map<String,MapDifference.ValueDifference<Collection<Mutation>>> difference =
+            Maps.difference(
+                    report_.getSurvivors().asMap(),
+                    previous_.getSurvivors().asMap())
+                    .entriesDiffering();
 
-    for (String className : report_.sourceClasses()) {
-      Collection<Mutation> mutations = getNewSurvivors(className);
-      if (mutations.size() > 0) {
-        classes.add(new MutatedClass(owner_, className, mutations));
-      }
-    }
-    return classes;
-  }
-
-  public Collection<Mutation> getDifferentMutations(String className) {
-    Set<Mutation> mutations = new HashSet<Mutation>(report_.getMutationsForClassName(className));
-    mutations.removeAll(previous_.getMutationsForClassName(className));
-    return mutations;
-  }
-
-  public Collection<Mutation> getNewSurvivors(String className) {
-    ArrayList<Mutation> survivors = new ArrayList<Mutation>();
-
-    for (Mutation m : getDifferentMutations(className)) {
-      if (!m.isDetected()) {
-        survivors.add(m);
-      }
-    }
-
-    return survivors;
+    return Maps.transformEntries(difference, classMutationDifferenceTransform_).values();
   }
 
   public AbstractBuild getOwner() {
     return owner_;
   }
+
+  private static final Maps.EntryTransformer<String, Collection<Mutation>, MutationStats> statsTransformer_ =
+          new Maps.EntryTransformer<String, Collection<Mutation>, MutationStats>() {
+            public MutationStats transformEntry(String name, Collection<Mutation> mutations) {
+              return new MutationStatsImpl(name, mutations);
+            }
+          };
+
+  private Maps.EntryTransformer<String, MapDifference.ValueDifference<Collection<Mutation>>, MutatedClass> classMutationDifferenceTransform_ =
+          new Maps.EntryTransformer<String, MapDifference.ValueDifference<Collection<Mutation>>, MutatedClass>() {
+            public MutatedClass transformEntry(String name, MapDifference.ValueDifference<Collection<Mutation>> value) {
+              Collection<Mutation> newMutations = Lists.newArrayList(value.leftValue());
+              newMutations.removeAll(value.rightValue());
+              return new MutatedClass(owner_, name, newMutations);
+            }
+          };
 
   private static final Logger logger = Logger.getLogger(MutationResult.class.getName());
 

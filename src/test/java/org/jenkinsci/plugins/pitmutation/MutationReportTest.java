@@ -3,6 +3,8 @@ package org.jenkinsci.plugins.pitmutation;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -34,7 +36,7 @@ public class MutationReportTest {
   @Test
   public void sortsMutationsByClassName() throws IOException, SAXException {
     MutationReport report = new MutationReport(mutationsXml_[0]);
-    Set<Mutation> mutations = report.getMutationsForClassName("org.jenkinsci.plugins.pitmutation.MutationReport");
+    Collection<Mutation> mutations = report.getMutationsForClassName("org.jenkinsci.plugins.pitmutation.MutationReport");
     assertThat(mutations.size(), is(31));
   }
 
@@ -42,11 +44,14 @@ public class MutationReportTest {
   public void canDigestAMutation() throws IOException, SAXException {
     MutationReport report = new MutationReport(new ByteArrayInputStream(MUTATIONS.getBytes()));
 
-    List<Mutation> mutations = report.getMutations();
+    assertThat(report.getMutationStats().getTotalMutations(), is(2));
 
-    assertThat(mutations.size(), is(2));
+    Iterator<Mutation> mutations =
+            report.getMutationsByClass().get("com.mediagraft.podsplice.controllers.massupload.SafeMultipartFile").iterator();
 
-    Mutation m1 = mutations.get(0);
+    Mutation m2 = mutations.next();
+    Mutation m1 = mutations.next();
+
     assertThat(m1.isDetected(), is(true));
     assertThat(m1.getLineNumber(), is(54));
     assertThat(m1.getStatus(), is("NO_COVERAGE"));
@@ -54,7 +59,6 @@ public class MutationReportTest {
     assertThat(m1.getMutatedClass(), is("com.mediagraft.podsplice.controllers.massupload.SafeMultipartFile"));
     assertThat(m1.getMutator(), is("org.pitest.mutationtest.engine.gregor.mutators.ReturnValsMutator"));
 
-    Mutation m2 = mutations.get(1);
     assertThat(m2.isDetected(), is(false));
     assertThat(m2.getLineNumber(), is(57));
     assertThat(m2.getStatus(), is("KILLED"));

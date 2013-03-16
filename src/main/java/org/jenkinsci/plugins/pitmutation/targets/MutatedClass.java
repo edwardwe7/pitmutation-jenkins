@@ -1,5 +1,7 @@
 package org.jenkinsci.plugins.pitmutation.targets;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 import org.jenkinsci.plugins.pitmutation.Mutation;
 
 import java.io.File;
@@ -20,35 +22,16 @@ import hudson.util.TextFile;
  * Time: 02:31
  */
 public class MutatedClass {
-  private String name_;
-  private String package_;
-  private String fileName_;
-  private Collection<Mutation> mutations_;
-  private Map<Integer, Collection<Mutation>> lineMap_;
-  private AbstractBuild owner_;
+
 
   public MutatedClass(AbstractBuild owner, String name, Collection<Mutation> mutations) {
     owner_ = owner;
     name_ = name;
-    mutations_ = mutations;
+    mutatedLines_ = MutatedLine.createMutatedLines(mutations);
 
     int lastDot = name.lastIndexOf('.');
     package_ = name_.substring(0, lastDot);
     fileName_ = name_.substring(lastDot + 1) + ".java.html";
-
-    lineMap_ = new HashMap<Integer, Collection<Mutation>>();
-    aggregateLines();
-  }
-
-  private void aggregateLines() {
-    for (Mutation mutation : mutations_) {
-      Collection<Mutation> lines = lineMap_.get(mutation.getLineNumber());
-      if (lines == null) {
-        lines = new ArrayList<Mutation>();
-        lineMap_.put(mutation.getLineNumber(), lines);
-      }
-      lines.add(mutation);
-    }
   }
 
   public String getName() {
@@ -77,22 +60,13 @@ public class MutatedClass {
     }
   }
 
-  public Collection<Integer> getLineAggregations() {
-    return lineMap_.keySet();
+  public Collection<MutatedLine> getMutatedLines() {
+    return mutatedLines_;
   }
 
-  public Collection<Mutation> getMutationsForLine(int lineNumber) {
-    return lineMap_.get(lineNumber);
-  }
-
-  public int getNumberOfMutationsOn(int lineNumber) {
-    logger.warning("Found " + lineMap_.get(lineNumber).size() + " mutations on line " + lineNumber);
-    return lineMap_.get(lineNumber).size();
-  }
-  public Collection<Mutation> getMutations() {
-    return mutations_;
-  }
-
-  private static final Logger logger = Logger.getLogger(MutationResult.class.getName());
-
+  private String name_;
+  private String package_;
+  private String fileName_;
+  private Collection<MutatedLine> mutatedLines_;
+  private AbstractBuild owner_;
 }

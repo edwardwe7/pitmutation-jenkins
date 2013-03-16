@@ -21,10 +21,10 @@
                 <h2>${mutatedClass.name}</h2>
                 <table>
                 <tr><th>Line</th><th>Mutations</th></tr>
-                <j:forEach var="line" items="${mutatedClass.lineAggregations}">
+                <j:forEach var="line" items="${mutatedClass.mutatedLines}">
                 <tr>
-                  <td>${line}</td>
-                  <td>x ${mutatedClass.numberOfMutationsOn(line)}</td>
+                  <td>${line.lineNumber}</td>
+                  <td>x ${line.mutations.size}</td>
                 </tr>
                 </j:forEach>
                 </table>
