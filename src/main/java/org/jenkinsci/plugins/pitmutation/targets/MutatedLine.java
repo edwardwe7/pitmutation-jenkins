@@ -35,6 +35,10 @@ public class MutatedLine {
     return mutations_;
   }
 
+  public int getMutationCount() {
+    return mutations_.size();
+  }
+
   private int lineNumber_;
   private Collection<Mutation> mutations_;
 

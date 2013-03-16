@@ -24,7 +24,7 @@
                 <j:forEach var="line" items="${mutatedClass.mutatedLines}">
                 <tr>
                   <td>${line.lineNumber}</td>
-                  <td>x ${line.mutations.size}</td>
+                  <td>x ${line.mutationCount}</td>
                 </tr>
                 </j:forEach>
                 </table>
