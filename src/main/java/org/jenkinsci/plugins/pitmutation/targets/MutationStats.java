@@ -14,6 +14,10 @@ public abstract class MutationStats {
 
   public abstract int getTotalMutations();
 
+  public int getKillCount() {
+    return getTotalMutations() - getUndetected();
+  }
+
   public float getKillPercent() {
     return round(100f * (float)(getTotalMutations() - getUndetected()) / (float) getTotalMutations());
   }
@@ -22,6 +26,25 @@ public abstract class MutationStats {
     BigDecimal bd = new BigDecimal(ratio);
     BigDecimal rounded = bd.setScale(3, BigDecimal.ROUND_HALF_UP);
     return rounded.floatValue();
+  }
+
+  public MutationStats aggregate(final MutationStats other) {
+    return new MutationStats() {
+      @Override
+      public String getTitle() {
+        return MutationStats.this.getTitle() + ", " + other.getTitle();
+      }
+
+      @Override
+      public int getUndetected() {
+        return MutationStats.this.getUndetected() + other.getUndetected();
+      }
+
+      @Override
+      public int getTotalMutations() {
+        return MutationStats.this.getTotalMutations() + other.getTotalMutations();
+      }
+    };
   }
 
   public MutationStats delta(final MutationStats other) {

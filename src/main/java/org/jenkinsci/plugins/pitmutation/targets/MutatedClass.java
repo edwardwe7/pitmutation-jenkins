@@ -8,20 +8,25 @@ import java.util.Collection;
 
 import hudson.model.AbstractBuild;
 import hudson.util.TextFile;
+import org.jenkinsci.plugins.pitmutation.PitBuildAction;
 
 /**
  * User: Ed Kimber
  * Date: 15/03/13
  * Time: 02:31
  */
-public class MutatedClass {
+public class MutatedClass extends MutationResult {
 
+  public static MutatedClass create(String name, Collection<Mutation> mutations) {
+    MutationStats stats = new MutationStatsImpl(name, mutations);
+    MutatedClass product = new MutatedClass(name, stats);
+    product.mutatedLines_ = MutatedLine.createMutatedLines(mutations);
+    return product;
+  }
 
-  public MutatedClass(AbstractBuild owner, String name, Collection<Mutation> mutations) {
-    owner_ = owner;
+  private MutatedClass(String name, MutationStats stats) {
+    super(stats);
     name_ = name;
-    mutationStats_ = new MutationStatsImpl(name, mutations);
-    mutatedLines_ = MutatedLine.createMutatedLines(mutations);
 
     int lastDot = name.lastIndexOf('.');
     package_ = name_.substring(0, lastDot);
@@ -40,24 +45,6 @@ public class MutatedClass {
     return package_;
   }
 
-  public MutationStats getMutationStats() {
-    return mutationStats_;
-  }
-
-  public String getSourceFileContent() {
-    //can't return inner class content
-    if (fileName_.contains("$")) {
-      return "See main class.";
-    }
-    try {
-      return new TextFile(new File(owner_.getRootDir(), "mutation-reports/" + package_ + File.separator + fileName_)).read();
-    }
-    catch (IOException exception) {
-      return "Could not read source file: " + owner_.getRootDir().getPath()
-             + "/mutation-reports/" + package_ + File.separator + fileName_ + "\n";
-    }
-  }
-
   public Collection<MutatedLine> getMutatedLines() {
     return mutatedLines_;
   }
@@ -65,7 +52,5 @@ public class MutatedClass {
   private String name_;
   private String package_;
   private String fileName_;
-  private MutationStats mutationStats_;
   private Collection<MutatedLine> mutatedLines_;
-  private AbstractBuild owner_;
 }

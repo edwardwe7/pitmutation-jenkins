@@ -3,7 +3,8 @@ package org.jenkinsci.plugins.pitmutation;
 import hudson.FilePath;
 import hudson.model.Result;
 
-import org.jenkinsci.plugins.pitmutation.targets.MutationResult;
+import hudson.util.TextFile;
+import org.jenkinsci.plugins.pitmutation.targets.ProjectMutations;
 import org.kohsuke.stapler.StaplerProxy;
 
 import hudson.model.AbstractBuild;
@@ -11,7 +12,10 @@ import hudson.model.HealthReport;
 import hudson.model.HealthReportingAction;
 import org.xml.sax.SAXException;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -42,30 +46,49 @@ public class PitBuildAction implements HealthReportingAction, StaplerProxy {
     return owner_;
   }
 
-  public MutationResult getTarget() {
-    return getResult();
+  public ProjectMutations getTarget() {
+    return getReport();
   }
 
-  public MutationResult getResult() {
-    return new MutationResult(this);
+  public ProjectMutations getReport() {
+    return new ProjectMutations(this);
   }
 
-  public synchronized MutationReport getReport() {
-    if (report_ == null) {
-      report_ = readReport();
+  public synchronized Map<String, MutationReport> getReports() {
+    if (reports_ == null) {
+      reports_ = readReports();
     }
-    return report_;
+    return reports_;
   }
 
-  private MutationReport readReport() {
+  public String getSourceFileContent(String packageName, String fileName) {
+    //can't return inner class content
+    if (fileName.contains("$")) {
+      return "See main class.";
+    }
     try {
-      FilePath[] files = new FilePath(new FilePath(owner_.getRootDir()), "mutation-reports").list("mutations.xml");
+      return new TextFile(new File(owner_.getRootDir(), "mutation-report/" + packageName + File.separator + fileName)).read();
+    }
+    catch (IOException exception) {
+      return "Could not read source file: " + owner_.getRootDir().getPath()
+              + "/mutation-report/" + packageName + File.separator + fileName + "\n";
+    }
+  }
+
+  private Map<String, MutationReport> readReports() {
+    Map<String, MutationReport> reports = new HashMap<String, MutationReport>();
+
+    try {
+      FilePath[] files = new FilePath(owner_.getRootDir()).list("mutation-report*/mutations.xml");
 
       if (files.length < 1) {
-        logger.log(Level.WARNING, "Could not find mutations.xml in " + owner_.getRootDir());
+        logger.log(Level.WARNING, "Could not find mutation-report*/mutations.xml in " + owner_.getRootDir());
       }
 
-      return MutationReport.create(files[0].read());
+      for (int i = 0; i < files.length; i++) {
+        logger.log(Level.WARNING, "Creating report for file: " + files[i].getRemote());
+        reports.put(String.valueOf(i), MutationReport.create(files[i].read()));
+      }
     } catch (IOException e) {
       e.printStackTrace();
     } catch (SAXException e) {
@@ -73,16 +96,16 @@ public class PitBuildAction implements HealthReportingAction, StaplerProxy {
     } catch (InterruptedException e) {
       e.printStackTrace();
     }
-    return new MutationReport();
+    return reports;
   }
 
-  public Ratio getKillRatio() {
-    return report_.getKillRatio();
-  }
+//  public Ratio getKillRatio() {
+//    return report_.getKillRatio();
+//  }
 
   public HealthReport getBuildHealth() {
-    return new HealthReport((int) getReport().getKillRatio().asPercentage(),
-            Messages._BuildAction_Description(getReport().getKillRatio()));
+    return new HealthReport((int) getReport().getMutationStats().getKillPercent(),
+            Messages._BuildAction_Description(getReport().getMutationStats().getKillPercent()));
   }
 
   public String getIconFileName() {
@@ -100,5 +123,5 @@ public class PitBuildAction implements HealthReportingAction, StaplerProxy {
   private static final Logger logger = Logger.getLogger(PitBuildAction.class.getName());
 
   private AbstractBuild<?, ?> owner_;
-  private MutationReport report_;
+  private Map<String, MutationReport> reports_;
 }

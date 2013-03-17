@@ -1,9 +1,13 @@
 package org.jenkinsci.plugins.pitmutation;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import hudson.Util;
+import hudson.remoting.VirtualChannel;
+import org.jenkinsci.plugins.pitmutation.targets.MutationStats;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
 
@@ -43,24 +47,21 @@ public class PitPublisher extends Recorder {
   public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) throws IOException,
           InterruptedException {
     listener_ = listener;
+    build_ = build;
 
     if (build.getResult().isBetterOrEqualTo(Result.SUCCESS)) {
-      listener_.getLogger().println("Looking for PIT report in " + build.getModuleRoot().getRemote());
+      listener_.getLogger().println("Looking for PIT reports in " + build.getModuleRoot().getRemote());
 
-      FilePath reportDir = getReportDir(build.getModuleRoot());
+      final FilePath[] moduleRoots = build.getModuleRoots();
+      final boolean multipleModuleRoots =
+              moduleRoots != null && moduleRoots.length > 1;
+      final FilePath moduleRoot = multipleModuleRoots ? build.getWorkspace() : build.getModuleRoot();
 
-      if (!mutationsReportExists(reportDir)) {
-        listener_.getLogger().println("No PIT mutation reports found. Searched '" + reportDir + "'.");
-        build.setResult(Result.FAILURE);
-        return true;
-      }
-
-      FilePath[] search = reportDir.list("**/mutations.xml");
-      listener_.getLogger().println("Found report dir: " + search[0].getParent());
+      ParseReportCallable fileCallable = new ParseReportCallable(mutationStatsFile_);
+      FilePath[] reports = moduleRoot.act(fileCallable);
+      publishReports(reports, new FilePath(build.getRootDir()));
 
       //publish latest reports
-      search[0].getParent().copyRecursiveTo(new FilePath(new FilePath(build.getRootDir()), "mutation-reports"));
-
       PitBuildAction action = new PitBuildAction(build);
       build.getActions().add(action);
       build.setResult(decideBuildResult(action));
@@ -68,7 +69,29 @@ public class PitPublisher extends Recorder {
     return true;
   }
 
-  private boolean mutationsReportExists(FilePath reportDir) {
+  void publishReports(FilePath[] reports, FilePath buildTarget) {
+    for (int i = 0; i < reports.length; i++) {
+      FilePath report = reports[i];
+      listener_.getLogger().println("Publishing mutation report: " + report.getRemote());
+
+      final FilePath targetPath = new FilePath(buildTarget, "mutation-report" + (i == 0 ? "" : i));
+      try {
+        reports[i].getParent().copyRecursiveTo(targetPath);
+      } catch (IOException e) {
+        Util.displayIOException(e, listener_);
+        e.printStackTrace(listener_.fatalError("Unable to copy coverage from " + reports[i] + " to " + buildTarget));
+        build_.setResult(Result.FAILURE);
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
+    }
+  }
+
+  void findReports(FilePath root) {
+    new FilePath(root, mutationStatsFile_);
+  }
+
+  boolean mutationsReportExists(FilePath reportDir) {
     if (reportDir == null) {
       return false;
     }
@@ -111,10 +134,10 @@ public class PitPublisher extends Recorder {
   private Condition percentageThreshold(final float percentage) {
     return new Condition() {
       public Result decideResult(PitBuildAction action) {
-        Ratio killRatio = action.getKillRatio();
-        listener_.getLogger().println("Kill ratio is " + killRatio.asPercentage() +"% ("
-                                      + killRatio.getNumerator() + " / " + killRatio.getDenominator() +")");
-        return action.getKillRatio().asPercentage() >= percentage ? Result.SUCCESS : Result.FAILURE;
+        MutationStats stats = action.getReport().getMutationStats();
+        listener_.getLogger().println("Kill ratio is " + stats.getKillPercent() +"% ("
+                                      + stats.getKillCount() + "  " + stats.getTotalMutations() +")");
+        return stats.getKillPercent() >= percentage ? Result.SUCCESS : Result.FAILURE;
       }
     };
   }
@@ -124,8 +147,10 @@ public class PitPublisher extends Recorder {
       public Result decideResult(final PitBuildAction action) {
         PitBuildAction previousAction = action.getPreviousAction();
         if (previousAction != null) {
-          listener_.getLogger().println("Previous kill ratio was " + previousAction.getKillRatio() + "%");
-          return action.getKillRatio().compareTo(previousAction.getKillRatio()) < 0 ? Result.FAILURE : Result.SUCCESS;
+          MutationStats stats = previousAction.getReport().getMutationStats();
+          listener_.getLogger().println("Previous kill ratio was " + stats.getKillPercent() + "%");
+          return action.getReport().getMutationStats().getKillPercent() > stats.getKillPercent()
+                  ? Result.FAILURE : Result.SUCCESS;
         }
         else {
           return Result.SUCCESS;
@@ -158,6 +183,7 @@ public class PitPublisher extends Recorder {
   private boolean killRatioMustImprove_;
   private float minimumKillRatio_;
   private transient BuildListener listener_;
+  private AbstractBuild<?,?> build_;
 
   public static class DescriptorImpl extends BuildStepDescriptor<Publisher> {
 
@@ -192,6 +218,25 @@ public class PitPublisher extends Recorder {
     public PitPublisher newInstance(StaplerRequest req, JSONObject formData) throws FormException {
       PitPublisher instance = req.bindJSON(PitPublisher.class, formData);
       return instance;
+    }
+  }
+
+  public static class ParseReportCallable implements FilePath.FileCallable<FilePath[]> {
+
+    private static final long serialVersionUID = 1L;
+
+    private final String reportFilePath;
+
+    public ParseReportCallable(String reportFilePath) {
+      this.reportFilePath = reportFilePath;
+    }
+
+    public FilePath[] invoke(File f, VirtualChannel channel) throws IOException, InterruptedException {
+      FilePath[] r = new FilePath(f).list(reportFilePath);
+      if (r.length < 1) {
+        throw new IOException("No reports found at location:" + reportFilePath);
+      }
+      return r;
     }
   }
 }

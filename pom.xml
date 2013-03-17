@@ -100,9 +100,12 @@
               <format>html</format>
               <format>xml</format>
           </formats>
-            <excludes>
-                <exclude>org.jenkinsci.plugins.pitmutation.Messages</exclude>
-            </excludes>
+            <instrumentation>
+                <excludes>
+                    <exclude>org.jenkinsci.plugins.pitmutation.Messages</exclude>
+                </excludes>
+            </instrumentation>
+            <check/>
         </configuration>
       </plugin>
       <plugin>
