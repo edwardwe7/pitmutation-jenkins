@@ -76,6 +76,11 @@ public class Mutation {
     return mutator_;
   }
 
+  public String getMutatorClass() {
+    int lastDot = mutator_.lastIndexOf('.');
+    return mutator_.substring(lastDot + 1);
+  }
+
   public void setMutator(final String mutator) {
     mutator_ = mutator;
   }

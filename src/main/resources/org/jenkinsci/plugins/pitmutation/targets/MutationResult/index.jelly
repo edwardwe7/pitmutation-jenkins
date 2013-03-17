@@ -5,7 +5,7 @@
         <l:main-panel>
             <h1>Mutation Stats</h1>
             <table>
-            <tr><th>Mutations</th><th>Undetected</th><th>Ratio</th></tr>
+            <tr><th>Mutations</th><th>Undetected</th><th>Coverage</th></tr>
             <tr>
               <td>
                 ${it.overallStats.totalMutations}
@@ -41,7 +41,11 @@
                 <j:forEach var="line" items="${mutatedClass.mutatedLines}">
                 <tr>
                   <td>${line.lineNumber}</td>
-                  <td>x ${line.mutationCount}</td>
+                  <td>x ${line.mutationCount}
+                    [<j:forEach var="lineM" items="${line.mutations}">
+                      ${lineM.mutatorClass}&nbsp;
+                    </j:forEach>]
+                  </td>
                 </tr>
                 </j:forEach>
                 </table>
