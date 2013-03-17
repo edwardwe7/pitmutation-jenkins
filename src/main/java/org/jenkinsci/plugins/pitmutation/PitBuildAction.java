@@ -62,7 +62,7 @@ public class PitBuildAction implements HealthReportingAction, StaplerProxy {
         logger.log(Level.WARNING, "Could not find mutations.xml in " + owner_.getRootDir());
       }
 
-      return new MutationReport(files[0].read());
+      return MutationReport.create(files[0].read());
     } catch (IOException e) {
       e.printStackTrace();
     } catch (SAXException e) {
@@ -70,7 +70,7 @@ public class PitBuildAction implements HealthReportingAction, StaplerProxy {
     } catch (InterruptedException e) {
       e.printStackTrace();
     }
-    return null;
+    return new MutationReport();
   }
 
   public Ratio getKillRatio() {

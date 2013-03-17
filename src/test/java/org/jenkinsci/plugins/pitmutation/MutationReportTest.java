@@ -29,20 +29,20 @@ public class MutationReportTest {
 
   @Test
   public void countsKills() throws IOException, SAXException {
-    MutationReport report = new MutationReport(mutationsXml_[0]);
+    MutationReport report =  MutationReport.create(mutationsXml_[0]);
     assertThat(report.getKillRatio(), is(new Ratio(5,16)));
   }
 
   @Test
   public void sortsMutationsByClassName() throws IOException, SAXException {
-    MutationReport report = new MutationReport(mutationsXml_[0]);
+    MutationReport report =  MutationReport.create(mutationsXml_[0]);
     Collection<Mutation> mutations = report.getMutationsForClassName("org.jenkinsci.plugins.pitmutation.MutationReport");
     assertThat(mutations.size(), is(5));
   }
 
   @Test
   public void canDigestAMutation() throws IOException, SAXException {
-    MutationReport report = new MutationReport(new ByteArrayInputStream(MUTATIONS.getBytes()));
+    MutationReport report = MutationReport.create(new ByteArrayInputStream(MUTATIONS.getBytes()));
 
     assertThat(report.getMutationStats().getTotalMutations(), is(2));
 

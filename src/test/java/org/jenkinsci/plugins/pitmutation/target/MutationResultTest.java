@@ -33,8 +33,8 @@ public class MutationResultTest {
     InputStream[] mutationsXml_ = new InputStream[2];
     mutationsXml_[0] = MutationReport.class.getResourceAsStream("mutations-00.xml");
     mutationsXml_[1] = MutationReport.class.getResourceAsStream("mutations-01.xml");
-    MutationReport reportOld = new MutationReport(mutationsXml_[0]);
-    MutationReport reportNew = new MutationReport(mutationsXml_[1]);
+    MutationReport reportOld = MutationReport.create(mutationsXml_[0]);
+    MutationReport reportNew = MutationReport.create(mutationsXml_[1]);
 
     PitBuildAction buildAction_ = mock(PitBuildAction.class);
     when(buildAction_.getReport()).thenReturn(reportNew);

@@ -4,14 +4,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
-import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.*;
-import net.sf.json.filters.MappingPropertyFilter;
 import org.apache.commons.digester3.Digester;
 import org.jenkinsci.plugins.pitmutation.targets.MutatedLine;
 import org.jenkinsci.plugins.pitmutation.targets.MutationStats;
-import org.jenkinsci.plugins.pitmutation.targets.MutationStatsImpl;
 import org.xml.sax.SAXException;
 
 /**
@@ -19,24 +16,37 @@ import org.xml.sax.SAXException;
  */
 public class MutationReport {
 
-  public MutationReport(InputStream xmlReport) throws IOException, SAXException {
-    this();
-    digestMutations(xmlReport);
-  }
-
-  private MutationReport() {
+  public MutationReport() {
     mutationsByClass_ = HashMultimap.create();
     lineMutationsByClass_ = HashMultimap.create();
   }
 
-  public static MutationReport createEmptyReport() {
-    return new MutationReport();
+  public static MutationReport create(InputStream xmlReport) throws IOException, SAXException {
+    return digestMutations(xmlReport);
+  }
+
+  private static MutationReport digestMutations(InputStream input) throws IOException, SAXException {
+    Digester digester = new Digester();
+    digester.addObjectCreate("mutations", MutationReport.class);
+    digester.addObjectCreate("mutations/mutation", Mutation.class);
+    digester.addSetNext("mutations/mutation", "addMutation", "org.jenkinsci.plugins.pitmutation.Mutation");
+    digester.addSetProperties("mutations/mutation");
+    digester.addSetNestedProperties("mutations/mutation");
+
+    return digester.parse(input);
+  }
+
+  public void addMutation(Mutation mutation) {
+    mutationsByClass_.put(mutation.getMutatedClass(), mutation);
+    if (mutation.isDetected()) {
+      killCount_++;
+    }
   }
 
   //---
 
   public Ratio getKillRatio() {
-    return this.killRatio_;
+    return new Ratio(killCount_, mutationsByClass_.values().size());
   }
 
   public Multimap<String, Mutation> getMutationsByClass() {
@@ -56,27 +66,7 @@ public class MutationReport {
     return mutations != null ? mutations : EMPTY_SET;
   }
 
-  private void digestMutations(InputStream input) throws IOException, SAXException {
-    Digester digester = new Digester();
-    digester.addObjectCreate("mutations/mutation", Mutation.class);
-    digester.addSetNext("mutations/mutation", "add", "org.jenkinsci.plugins.pitmutation.Mutation");
-    digester.addSetProperties("mutations/mutation");
-    digester.addSetNestedProperties("mutations/mutation");
-    ArrayList<Mutation> mutations = new ArrayList<Mutation>();
-    digester.push(mutations);
-    digester.parse(input);
 
-    float killed = 0;
-    float mutationCount = 0;
-    for (Mutation mutation : mutations) {
-      if (mutation.isDetected()) {
-          killed++;
-      }
-      mutationCount++;
-      mutationsByClass_.put(mutation.getMutatedClass(), mutation);
-    }
-    killRatio_ = new Ratio(killed, mutationCount);
-  }
 
   public MutationStats getMutationStats() {
     return new MutationStats() {
@@ -85,11 +75,11 @@ public class MutationReport {
       }
 
       public int getUndetected() {
-        return (int) killRatio_.getDenominator() - (int) killRatio_.getNumerator();
+        return (int) getKillRatio().getDenominator() - (int) getKillRatio().getNumerator();
       }
 
       public int getTotalMutations() {
-        return (int) killRatio_.getDenominator();
+        return (int) getKillRatio().getDenominator();
       }
     };
   }
@@ -104,5 +94,5 @@ public class MutationReport {
 
   private Multimap<String, MutatedLine> lineMutationsByClass_;
   private Multimap<String, Mutation> mutationsByClass_;
-  private Ratio killRatio_ = new Ratio(0,0);
+  private int killCount_ = 0;
 }

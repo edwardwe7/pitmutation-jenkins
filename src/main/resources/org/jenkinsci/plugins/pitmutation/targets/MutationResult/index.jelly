@@ -4,14 +4,17 @@
         <st:include it="${it.owner}" page="sidepanel.jelly"/>
         <l:main-panel>
             <h1>Mutation Stats</h1>
-            <p>Mutations Performed: ${it.overallStats.totalMutations} (${it.statsDelta.totalMutations})</p>
-            <p>Undetected Mutations: ${it.overallStats.undetected} (${it.statsDelta.undetected})</p>
+            <p>Mutations Performed: ${it.overallStats.totalMutations}
+            (<j:if test="${it.statsDelta.totalMutations &lt; 0}">-</j:if>${it.statsDelta.totalMutations})</p>
+            <p>Undetected Mutations: ${it.overallStats.undetected}
+            (<j:if test="${it.statsDelta.undetected &lt; 0}">-</j:if>${it.statsDelta.undetected})</p>
             <h1>New Mutation Targets</h1>
             <table>
-            <tr><th>Class</th><th>Undetected</th></tr>
+            <tr><th>Class</th><th>Mutations</th><th>Undetected</th></tr>
             <j:forEach var="stat" items="${it.statsForNewTargets}">
             <tr>
             <td>${stat.title}</td>
+            <td>${stat.totalMutations}</td>
             <td>${stat.undetected}</td>
             </tr>
             </j:forEach>

@@ -20,9 +20,6 @@ public class MutationResult implements Serializable {
     owner_ = action.getOwner();
     report_ = action.getReport();
     previous_ = action.getPreviousAction().getReport();
-    if (previous_ == null) {
-      previous_ = MutationReport.createEmptyReport();
-    }
   }
 
   public MutationStats getOverallStats() {
