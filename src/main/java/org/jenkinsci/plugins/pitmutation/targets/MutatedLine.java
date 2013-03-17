@@ -1,12 +1,9 @@
 package org.jenkinsci.plugins.pitmutation.targets;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
+import com.google.common.collect.*;
 import org.jenkinsci.plugins.pitmutation.Mutation;
 
 import java.util.Collection;
-import java.util.logging.Logger;
 
 /**
  * @author edward
@@ -14,7 +11,7 @@ import java.util.logging.Logger;
 public class MutatedLine {
 
   public static Collection<MutatedLine> createMutatedLines(Collection<Mutation> mutations) {
-    Multimap<Integer, Mutation> multimap = HashMultimap.create();
+    Multimap<Integer, Mutation> multimap = TreeMultimap.create(Ordering.natural(), Ordering.arbitrary());
     for (Mutation m : mutations) {
       multimap.put(m.getLineNumber(), m);
     }
@@ -22,7 +19,6 @@ public class MutatedLine {
   }
 
   public MutatedLine(int lineNumber, Collection<Mutation> mutations) {
-    logger.warning("Found " + mutations.size() + " mutations on line " + lineNumber);
     lineNumber_ = lineNumber;
     mutations_ = mutations;
   }
@@ -41,8 +37,6 @@ public class MutatedLine {
 
   private int lineNumber_;
   private Collection<Mutation> mutations_;
-
-  private static final Logger logger = Logger.getLogger(MutatedLine.class.getName());
 
   private static final Maps.EntryTransformer<Integer, Collection<Mutation>, MutatedLine> lineTransformer_ =
           new Maps.EntryTransformer<Integer, Collection<Mutation>, MutatedLine>() {

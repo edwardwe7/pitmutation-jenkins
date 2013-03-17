@@ -25,7 +25,6 @@ public class PitBuildAction implements HealthReportingAction, StaplerProxy {
 
   public PitBuildAction(AbstractBuild<?,?> owner) {
     owner_ = owner;
-    report_ = getReport();
   }
 
   public PitBuildAction getPreviousAction() {
@@ -54,7 +53,14 @@ public class PitBuildAction implements HealthReportingAction, StaplerProxy {
     return new MutationResult(this);
   }
 
-  public MutationReport getReport() {
+  public synchronized MutationReport getReport() {
+    if (report_ == null) {
+      report_ = readReport();
+    }
+    return report_;
+  }
+
+  private MutationReport readReport() {
     try {
       FilePath[] files = new FilePath(new FilePath(owner_.getRootDir()), "mutation-reports").list("mutations.xml");
 
