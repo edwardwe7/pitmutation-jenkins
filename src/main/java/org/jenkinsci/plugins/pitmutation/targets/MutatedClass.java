@@ -27,6 +27,7 @@ public class MutatedClass {
   public MutatedClass(AbstractBuild owner, String name, Collection<Mutation> mutations) {
     owner_ = owner;
     name_ = name;
+    mutationStats_ = new MutationStatsImpl(name, mutations);
     mutatedLines_ = MutatedLine.createMutatedLines(mutations);
 
     int lastDot = name.lastIndexOf('.');
@@ -44,6 +45,10 @@ public class MutatedClass {
 
   public String getPackage() {
     return package_;
+  }
+
+  public MutationStats getMutationStats() {
+    return mutationStats_;
   }
 
   public String getSourceFileContent() {
@@ -67,6 +72,7 @@ public class MutatedClass {
   private String name_;
   private String package_;
   private String fileName_;
+  private MutationStats mutationStats_;
   private Collection<MutatedLine> mutatedLines_;
   private AbstractBuild owner_;
 }
