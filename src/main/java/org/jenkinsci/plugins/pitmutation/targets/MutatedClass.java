@@ -25,7 +25,7 @@ public class MutatedClass extends MutationResult {
   }
 
   private MutatedClass(String name, MutationStats stats) {
-    super(stats);
+    super(null, null);
     name_ = name;
 
     int lastDot = name.lastIndexOf('.');
