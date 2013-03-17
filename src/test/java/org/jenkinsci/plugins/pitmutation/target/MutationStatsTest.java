@@ -56,6 +56,7 @@ public class MutationStatsTest {
     assertThat(b.getKillPercent(), is(33.333f));
   }
 
+  @Test
   public void mutationStatsDelta() {
     MutationStats delta = createMutationStatsA().delta(createMutationStatsB());
 
