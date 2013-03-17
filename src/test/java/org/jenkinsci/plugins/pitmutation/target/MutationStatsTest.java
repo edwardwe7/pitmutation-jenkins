@@ -61,7 +61,7 @@ public class MutationStatsTest {
     MutationStats delta = createMutationStatsA().delta(createMutationStatsB());
 
     assertThat(delta.getTotalMutations(), is(0));
-    assertThat(delta.getUndetected(), is(1));
+    assertThat(delta.getUndetected(), is(-1));
     assertThat(delta.getKillPercent(), is(33.334f));
   }
 
