@@ -100,6 +100,9 @@
               <format>html</format>
               <format>xml</format>
           </formats>
+            <excludes>
+                <exclude>org.jenkinsci.plugins.pitmutation.Messages</exclude>
+            </excludes>
         </configuration>
       </plugin>
       <plugin>
@@ -110,6 +113,9 @@
           <targetClasses>
             <param>org.jenkinsci.plugins.pitmutation.*</param>
           </targetClasses>
+          <excludedClasses>
+              <param>org.jenkinsci.plugins.pitmutation.Messages</param>
+          </excludedClasses>
           <targetTests>
             <param>org.jenkinsci.plugins.pitmutation.*</param>
           </targetTests>
