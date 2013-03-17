@@ -11,9 +11,6 @@ import hudson.model.HealthReport;
 import hudson.model.HealthReportingAction;
 import org.xml.sax.SAXException;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;

@@ -1,7 +1,5 @@
 package org.jenkinsci.plugins.pitmutation.targets;
 
-import org.jenkinsci.plugins.pitmutation.Ratio;
-
 import java.math.BigDecimal;
 
 /**

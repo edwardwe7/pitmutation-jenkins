@@ -1,17 +1,10 @@
 package org.jenkinsci.plugins.pitmutation.targets;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
 import org.jenkinsci.plugins.pitmutation.Mutation;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.logging.Logger;
 
 import hudson.model.AbstractBuild;
 import hudson.util.TextFile;

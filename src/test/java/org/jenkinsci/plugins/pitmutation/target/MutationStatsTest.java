@@ -5,7 +5,6 @@ import org.jenkinsci.plugins.pitmutation.targets.MutationStats;
 import org.jenkinsci.plugins.pitmutation.targets.MutationStatsImpl;
 import org.junit.Test;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 
 import static org.hamcrest.MatcherAssert.assertThat;
