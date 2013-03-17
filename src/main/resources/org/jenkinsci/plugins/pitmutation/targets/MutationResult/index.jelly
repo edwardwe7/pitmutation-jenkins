@@ -43,7 +43,7 @@
                   <td>${line.lineNumber}</td>
                   <td>x ${line.mutationCount}
                     [<j:forEach var="lineM" items="${line.mutations}">
-                      ${lineM.mutatorClass}&nbsp;
+                      ${lineM.mutatorClass}&#160;
                     </j:forEach>]
                   </td>
                 </tr>
