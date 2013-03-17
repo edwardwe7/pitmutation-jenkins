@@ -2,6 +2,8 @@ package org.jenkinsci.plugins.pitmutation.targets;
 
 import org.jenkinsci.plugins.pitmutation.Ratio;
 
+import java.math.BigDecimal;
+
 /**
  * User: Ed Kimber
  * Date: 15/03/13
@@ -15,7 +17,13 @@ public abstract class MutationStats {
   public abstract int getTotalMutations();
 
   public float getKillPercent() {
-    return new Ratio(getUndetected(), getTotalMutations()).asPercentage();
+    return round(100f * (float)(getTotalMutations() - getUndetected()) / (float) getTotalMutations());
+  }
+
+  private float round(float ratio) {
+    BigDecimal bd = new BigDecimal(ratio);
+    BigDecimal rounded = bd.setScale(3, BigDecimal.ROUND_HALF_UP);
+    return rounded.floatValue();
   }
 
   public MutationStats delta(final MutationStats other) {
@@ -33,6 +41,10 @@ public abstract class MutationStats {
       @Override
       public int getTotalMutations() {
         return MutationStats.this.getTotalMutations() - other.getTotalMutations();
+      }
+
+      public float getKillPercent() {
+        return round(MutationStats.this.getKillPercent() - other.getKillPercent());
       }
     };
   }

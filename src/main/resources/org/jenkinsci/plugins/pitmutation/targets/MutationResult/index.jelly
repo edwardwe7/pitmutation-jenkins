@@ -5,7 +5,7 @@
         <l:main-panel>
             <h1>Mutation Stats</h1>
             <table>
-            <tr><th>Mutations</th><th>Undetected</th><th>Ratio</ht></tr>
+            <tr><th>Mutations</th><th>Undetected</th><th>Ratio</th></tr>
             <tr>
               <td>
                 ${it.overallStats.totalMutations}
@@ -17,7 +17,7 @@
               </td>
               <td>
                 ${it.overallStats.killPercent}&#37;
-                (<j:if test="${it.statsDelta.undetected &gt; 0}">+</j:if>${it.statsDelta.killPercent}&#37;)
+                (<j:if test="${it.statsDelta.killPercent &gt; 0}">+</j:if>${it.statsDelta.killPercent}&#37;)
               </td>
             </tr>
             </table>
@@ -46,7 +46,7 @@
                 </j:forEach>
                 </table>
 ${mutatedClass.sourceFileContent}
-<hr>
+<hr/>
             </j:forEach>
         </l:main-panel>
     </l:layout>
