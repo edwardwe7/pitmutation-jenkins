@@ -1,5 +1,7 @@
 package org.jenkinsci.plugins.pitmutation.targets;
 
+import org.jenkinsci.plugins.pitmutation.Ratio;
+
 /**
  * User: Ed Kimber
  * Date: 15/03/13
@@ -11,6 +13,10 @@ public abstract class MutationStats {
   public abstract int getUndetected();
 
   public abstract int getTotalMutations();
+
+  public float getKillPercent() {
+    return new Ratio(getUndetected(), getTotalMutations()).asPercentage();
+  }
 
   public MutationStats delta(final MutationStats other) {
     return new MutationStats() {

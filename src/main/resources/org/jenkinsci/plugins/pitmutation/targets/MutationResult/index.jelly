@@ -4,10 +4,23 @@
         <st:include it="${it.owner}" page="sidepanel.jelly"/>
         <l:main-panel>
             <h1>Mutation Stats</h1>
-            <p>Mutations Performed: ${it.overallStats.totalMutations}
-            (<j:if test="${it.statsDelta.totalMutations &lt; 0}">-</j:if>${it.statsDelta.totalMutations})</p>
-            <p>Undetected Mutations: ${it.overallStats.undetected}
-            (<j:if test="${it.statsDelta.undetected &lt; 0}">-</j:if>${it.statsDelta.undetected})</p>
+            <table>
+            <tr><th>Mutations</th><th>Undetected</th><th>Ratio</ht></tr>
+            <tr>
+              <td>
+                ${it.overallStats.totalMutations}
+                (<j:if test="${it.statsDelta.totalMutations &gt; 0}">+</j:if>${it.statsDelta.totalMutations})
+              </td>
+              <td>
+                ${it.overallStats.undetected}
+                (<j:if test="${it.statsDelta.undetected &gt; 0}">+</j:if>${it.statsDelta.undetected})
+              </td>
+              <td>
+                ${it.overallStats.killPercent}&#37;
+                (<j:if test="${it.statsDelta.undetected &gt; 0}">+</j:if>${it.statsDelta.killPercent}&#37;)
+              </td>
+            </tr>
+            </table>
             <h1>New Mutation Targets</h1>
             <table>
             <tr><th>Class</th><th>Mutations</th><th>Undetected</th></tr>
@@ -33,6 +46,7 @@
                 </j:forEach>
                 </table>
 ${mutatedClass.sourceFileContent}
+<hr>
             </j:forEach>
         </l:main-panel>
     </l:layout>
