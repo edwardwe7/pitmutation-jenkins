@@ -51,8 +51,6 @@
             <h1>Coverage Changes</h1>
             <table>
             <j:forEach var="change" items="${it.mutationChanges}">
-
-
             </j:forEach>
             </table>
             </j:if>

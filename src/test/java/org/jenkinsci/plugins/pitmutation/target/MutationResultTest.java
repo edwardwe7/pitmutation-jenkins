@@ -6,14 +6,14 @@ import org.jenkinsci.plugins.pitmutation.PitBuildAction;
 import org.jenkinsci.plugins.pitmutation.targets.ModuleResult;
 import org.jenkinsci.plugins.pitmutation.targets.MutatedClass;
 import org.jenkinsci.plugins.pitmutation.targets.MutationStats;
+import org.jenkinsci.plugins.pitmutation.utils.Pair;
 import org.junit.Before;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collection;
-import java.util.Iterator;
+import java.util.*;
 
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasSize;
@@ -28,22 +28,27 @@ import static org.mockito.Mockito.when;
  * Time: 21:42
  */
 public class MutationResultTest {
-//  @Before
-//  public void setUp() throws IOException, SAXException {
-//    InputStream[] mutationsXml_ = new InputStream[2];
-//    mutationsXml_[0] = MutationReport.class.getResourceAsStream("mutations-00.xml");
-//    mutationsXml_[1] = MutationReport.class.getResourceAsStream("mutations-01.xml");
-//    MutationReport reportOld = MutationReport.create(mutationsXml_[0]);
-//    MutationReport reportNew = MutationReport.create(mutationsXml_[1]);
-//
-//    PitBuildAction buildAction_ = mock(PitBuildAction.class);
-//    when(buildAction_.getReport()).thenReturn(reportNew);
-//    PitBuildAction previousBuildAction_ = mock(PitBuildAction.class);
-//    when(previousBuildAction_.getReport()).thenReturn(reportOld);
-//    when(buildAction_.getPreviousAction()).thenReturn(previousBuildAction_);
-//
-//    result_ = new ModuleResult(buildAction_);
-//  }
+  @Before
+  public void setUp() throws IOException, SAXException {
+    InputStream[] mutationsXml_ = new InputStream[2];
+    mutationsXml_[0] = MutationReport.class.getResourceAsStream("mutations-00.xml");
+    mutationsXml_[1] = MutationReport.class.getResourceAsStream("mutations-01.xml");
+    MutationReport reportOld = MutationReport.create(mutationsXml_[0]);
+    MutationReport reportNew = MutationReport.create(mutationsXml_[1]);
+    Map<String, MutationReport> reportsNew = new HashMap<String, MutationReport>();
+    Map<String, MutationReport> reportsOld = new HashMap<String, MutationReport>();
+    reportsNew.put("test_report", reportNew);
+    reportsOld.put("test_report", reportOld);
+
+
+    PitBuildAction buildAction_ = mock(PitBuildAction.class);
+    when(buildAction_.getReports()).thenReturn(reportsNew);
+    PitBuildAction previousBuildAction_ = mock(PitBuildAction.class);
+    when(previousBuildAction_.getReports()).thenReturn(reportsOld);
+    when(buildAction_.getPreviousAction()).thenReturn(previousBuildAction_);
+
+    result_ = new ModuleResult("test_module", null, new Pair<MutationReport>(reportNew, reportOld));
+  }
 //
 //  @Test
 //  public void findsClassesWithNewSurvivors() {
@@ -73,18 +78,18 @@ public class MutationResultTest {
 //    assertThat(mutant.getMutatedLines(), hasSize(2));
 //  }
 //
-//  @Test
-//  public void findsMutationsOnPitParserClass() {
-//    Collection<Mutation> mutations = result_.getMutationsForClass("org.jenkinsci.plugins.pitmutation.PitParser");
-//    assertThat(mutations, hasSize(3));
-//  }
-//
-//  @Test
-//  public void collectsMutationStats() {
-//    MutationStats stats = result_.getOverallStats();
-//    assertThat(stats.getTotalMutations(), is(19));
-//    assertThat(stats.getUndetected(), is(15));
-//  }
+    @Test
+    public void findsMutationsOnPitParserClass() {
+      MutatedClass pitParser = result_.getChildMap().get("org.jenkinsci.plugins.pitmutation.PitParser");
+      assertThat(pitParser.getChildren(), hasSize(3));
+    }
+
+    @Test
+    public void collectsMutationStats() {
+      MutationStats stats = result_.getMutationStats();
+      assertThat(stats.getTotalMutations(), is(19));
+      assertThat(stats.getUndetected(), is(15));
+    }
 //
 //  @Test
 //  public void collectsStatsOnNewTargets() {
