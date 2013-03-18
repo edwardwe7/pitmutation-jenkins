@@ -3,55 +3,49 @@
     <l:layout>
         <st:include it="${it.owner}" page="sidepanel.jelly"/>
         <l:main-panel>
-            <h1>Mutation Stats</h1>
+            <h1>${it.displayName}</h1>
+            <h2>Mutation Statistics</h2>
             <table>
             <tr><th>Mutations</th><th>Undetected</th><th>Coverage</th></tr>
             <tr>
               <td>
-                ${it.overallStats.totalMutations}
+                ${it.mutationStats.totalMutations}
                 (<j:if test="${it.statsDelta.totalMutations &gt; 0}">+</j:if>${it.statsDelta.totalMutations})
               </td>
               <td>
-                ${it.overallStats.undetected}
+                ${it.mutationStats.undetected}
                 (<j:if test="${it.statsDelta.undetected &gt; 0}">+</j:if>${it.statsDelta.undetected})
               </td>
               <td>
-                ${it.overallStats.killPercent}&#37;
+                ${it.mutationStats.killPercent}&#37;
                 (<j:if test="${it.statsDelta.killPercent &gt; 0}">+</j:if>${it.statsDelta.killPercent}&#37;)
               </td>
             </tr>
             </table>
-            <h1>New Mutation Targets</h1>
+
+            <h2>Components</h2>
             <table>
-            <tr><th>Class</th><th>Mutations</th><th>Undetected</th></tr>
-            <j:forEach var="stat" items="${it.statsForNewTargets}">
+            <tr><th>Name</th><th>Mutations</th><th>Undetected</th><th>Coverage</th></tr>
+            <j:forEach var="child" items="${it.children}">
             <tr>
-            <td>${stat.title}</td>
-            <td>${stat.totalMutations}</td>
-            <td>${stat.undetected}</td>
+              <td>
+                <a href="${child.url}">${child.displayName}</a>
+              </td>
+              <td>
+                ${child.mutationStats.totalMutations}
+                (<j:if test="${module.statsDelta.totalMutations &gt; 0}">+</j:if>${module.statsDelta.totalMutations})
+              </td>
+              <td>
+                ${child.mutationStats.undetected}
+                (<j:if test="${module.statsDelta.undetected &gt; 0}">+</j:if>${module.statsDelta.undetected})
+              </td>
+              <td>
+                ${child.mutationStats.killPercent}&#37;
+                (<j:if test="${module.statsDelta.killPercent &gt; 0}">+</j:if>${module.statsDelta.killPercent}&#37;)
+              </td>
             </tr>
             </j:forEach>
             </table>
-
-            <h1>New Survivors</h1>
-            <j:forEach var="mutatedClass" items="${it.classesWithNewSurvivors}">
-                <h2>${mutatedClass.name}</h2>
-                <table>
-                <tr><th>Line</th><th>Mutations</th></tr>
-                <j:forEach var="line" items="${mutatedClass.mutatedLines}">
-                <tr>
-                  <td>${line.lineNumber}</td>
-                  <td>x ${line.mutationCount}
-                    [<j:forEach var="lineM" items="${line.mutations}">
-                      ${lineM.mutatorClass}&#160;
-                    </j:forEach>]
-                  </td>
-                </tr>
-                </j:forEach>
-                </table>
-${mutatedClass.sourceFileContent}
-<hr/>
-            </j:forEach>
         </l:main-panel>
     </l:layout>
 </j:jelly>

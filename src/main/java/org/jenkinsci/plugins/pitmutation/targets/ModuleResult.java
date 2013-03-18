@@ -31,6 +31,14 @@ public class ModuleResult extends MutationResult implements Serializable  {
 //    return report_.getMutationsForClassName(className);
 //  }
 
+  public String getDisplayName() {
+    return "Module: " + getName();
+  }
+
+  public Map<String, MutatedClass> getChildMap() {
+    return Maps.transformEntries(reports_.getFirst().getMutationsByClass().asMap(), classTransformer);
+  }
+
   public Collection<MutationStats> getStatsForNewTargets() {
     return Maps.transformEntries(
             Maps.difference(
@@ -48,6 +56,13 @@ public class ModuleResult extends MutationResult implements Serializable  {
     return name_;
   }
 
+  private Maps.EntryTransformer<String, Collection<Mutation>, MutatedClass> classTransformer =
+          new Maps.EntryTransformer<String, Collection<Mutation>, MutatedClass>() {
+            public MutatedClass transformEntry(String name, Collection<Mutation> mutations) {
+              return MutatedClass.create(name, getOwner(), mutations, reports_.getSecond().getMutationsForClassName(name));
+            }
+          };
+
   private static final Maps.EntryTransformer<String, Collection<Mutation>, MutationStats> statsTransformer_ =
           new Maps.EntryTransformer<String, Collection<Mutation>, MutationStats>() {
             public MutationStats transformEntry(String name, Collection<Mutation> mutations) {
@@ -58,9 +73,7 @@ public class ModuleResult extends MutationResult implements Serializable  {
   private Maps.EntryTransformer<String, MapDifference.ValueDifference<Collection<Mutation>>, Pair<MutatedClass>> classMutationDifferenceTransform_ =
           new Maps.EntryTransformer<String, MapDifference.ValueDifference<Collection<Mutation>>, Pair<MutatedClass>>() {
             public Pair<MutatedClass> transformEntry(String name, MapDifference.ValueDifference<Collection<Mutation>> value) {
-              return new Pair<MutatedClass>(
-                      MutatedClass.create(name, value.leftValue()),
-                      MutatedClass.create(name, value.rightValue()));
+              return MutatedClass.createPair(name, getOwner(), value.leftValue(), value.rightValue());
             }
           };
 

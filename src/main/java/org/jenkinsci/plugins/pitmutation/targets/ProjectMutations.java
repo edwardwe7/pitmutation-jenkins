@@ -5,8 +5,10 @@ import org.jenkinsci.plugins.pitmutation.MutationReport;
 import org.jenkinsci.plugins.pitmutation.PitBuildAction;
 import org.jenkinsci.plugins.pitmutation.utils.Pair;
 
+import javax.management.monitor.StringMonitor;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -21,6 +23,7 @@ public class ProjectMutations extends MutationResult {
     action_ = action;
   }
 
+
   private static MutationStats aggregateStats(Collection<MutationReport> reports) {
     MutationStats stats = new MutationStatsImpl("", new ArrayList<Mutation>(0));
     for (MutationReport report : reports) {
@@ -29,12 +32,20 @@ public class ProjectMutations extends MutationResult {
     return stats;
   }
 
-  public Collection<ModuleResult> getModules() {
-    Collection<ModuleResult> modules = new ArrayList<ModuleResult>();
+  public String getName() {
+    return "Aggregated Reports";
+  }
+
+  public String getDisplayName() {
+    return "Modules";
+  }
+
+  public Map<String, ModuleResult> getChildMap() {
+    Map<String, ModuleResult> modules = new HashMap<String, ModuleResult>();
     Map<String, MutationReport> reports = action_.getReports();
     Map<String, MutationReport> previous = action_.getPreviousAction().getReports();
     for (String moduleName : reports.keySet()) {
-      modules.add(new ModuleResult(moduleName, getOwner(), new Pair<MutationReport>(
+      modules.put(moduleName, new ModuleResult(moduleName, getOwner(), new Pair<MutationReport>(
               reports.get(moduleName), previous.get(moduleName))));
     }
     return modules;
