@@ -49,8 +49,11 @@ public class MutatedClass extends MutationResult {
     name_ = name;
 
     int lastDot = name.lastIndexOf('.');
+    int firstDollar = name.indexOf('$');
     package_ = lastDot >= 0 ? name.substring(0, lastDot) : "";
-    fileName_ = lastDot >= 0 ? name.substring(lastDot + 1) + ".java.html" : "";
+    fileName_ = firstDollar >= 0
+            ? lastDot >= 0 ? name.substring(lastDot + 1, firstDollar) + ".java.html" : ""
+            : lastDot >= 0 ? name.substring(lastDot + 1) + ".java.html" : "";
   }
 
   @Override
@@ -59,10 +62,6 @@ public class MutatedClass extends MutationResult {
   }
 
   public String getSourceFileContent() {
-    //can't return inner class content
-    if (fileName_.contains("$")) {
-      return "See main class.";
-    }
     try {
       return new TextFile(new File(getOwner().getRootDir(), "mutation-report/" + package_ + File.separator + fileName_)).read();
     }

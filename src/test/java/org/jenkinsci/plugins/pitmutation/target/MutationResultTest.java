@@ -49,7 +49,7 @@ public class MutationResultTest {
 
     result_ = new ModuleResult("test_module", null, new Pair<MutationReport>(reportNew, reportOld));
   }
-//
+
 //  @Test
 //  public void findsClassesWithNewSurvivors() {
 //    Collection<MutatedClass> survivors = result_.getClassesWithNewSurvivors();
@@ -77,7 +77,7 @@ public class MutationResultTest {
 //    assertThat(mutant.getFileName(), is("PitBuildAction.java.html"));
 //    assertThat(mutant.getMutatedLines(), hasSize(2));
 //  }
-//
+
     @Test
     public void findsMutationsOnPitParserClass() {
       MutatedClass pitParser = result_.getChildMap().get("org.jenkinsci.plugins.pitmutation.PitParser");
