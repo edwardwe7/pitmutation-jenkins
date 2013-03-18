@@ -2,6 +2,7 @@ package org.jenkinsci.plugins.pitmutation.targets;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.google.common.collect.*;
@@ -59,6 +60,8 @@ public class ModuleResult extends MutationResult implements Serializable  {
   private Maps.EntryTransformer<String, Collection<Mutation>, MutatedClass> classTransformer =
           new Maps.EntryTransformer<String, Collection<Mutation>, MutatedClass>() {
             public MutatedClass transformEntry(String name, Collection<Mutation> mutations) {
+              logger.log(Level.FINER, "found " + reports_.getSecond().getMutationsForClassName(name).size() +
+              " reports for " + name);
               return MutatedClass.create(name, getOwner(), mutations, reports_.getSecond().getMutationsForClassName(name));
             }
           };

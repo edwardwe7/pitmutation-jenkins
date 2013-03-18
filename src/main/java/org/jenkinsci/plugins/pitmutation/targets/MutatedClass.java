@@ -51,6 +51,25 @@ public class MutatedClass extends MutationResult {
     fileName_ = lastDot >= 0 ? name.substring(lastDot + 1) + ".java.html" : "";
   }
 
+  @Override
+  public boolean isSourceLevel() {
+    return true;
+  }
+
+  public String getSourceFileContent() {
+    //can't return inner class content
+    if (fileName_.contains("$")) {
+      return "See main class.";
+    }
+    try {
+      return new TextFile(new File(getOwner().getRootDir(), "mutation-report/" + package_ + File.separator + fileName_)).read();
+    }
+    catch (IOException exception) {
+      return "Could not read source file: " + getOwner().getRootDir().getPath()
+              + "/mutation-report/" + package_+ File.separator + fileName_ + "\n";
+    }
+  }
+
   public String getDisplayName() {
     return "Class: " + getName();
   }

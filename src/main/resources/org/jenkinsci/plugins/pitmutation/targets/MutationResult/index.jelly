@@ -33,19 +33,24 @@
               </td>
               <td>
                 ${child.mutationStats.totalMutations}
-                (<j:if test="${module.statsDelta.totalMutations &gt; 0}">+</j:if>${module.statsDelta.totalMutations})
+                (<j:if test="${child.statsDelta.totalMutations &gt; 0}">+</j:if>${child.statsDelta.totalMutations})
               </td>
               <td>
                 ${child.mutationStats.undetected}
-                (<j:if test="${module.statsDelta.undetected &gt; 0}">+</j:if>${module.statsDelta.undetected})
+                (<j:if test="${child.statsDelta.undetected &gt; 0}">+</j:if>${child.statsDelta.undetected})
               </td>
               <td>
                 ${child.mutationStats.killPercent}&#37;
-                (<j:if test="${module.statsDelta.killPercent &gt; 0}">+</j:if>${module.statsDelta.killPercent}&#37;)
+                (<j:if test="${child.statsDelta.killPercent &gt; 0}">+</j:if>${child.statsDelta.killPercent}&#37;)
               </td>
             </tr>
             </j:forEach>
             </table>
+
+            <j:if test="${it.sourceLevel}">
+            <h1>Source</h1>
+            ${it.sourceFileContent}
+            </j:if>
         </l:main-panel>
     </l:layout>
 </j:jelly>

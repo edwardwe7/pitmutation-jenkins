@@ -61,20 +61,6 @@ public class PitBuildAction implements HealthReportingAction, StaplerProxy {
     return reports_;
   }
 
-  public String getSourceFileContent(String packageName, String fileName) {
-    //can't return inner class content
-    if (fileName.contains("$")) {
-      return "See main class.";
-    }
-    try {
-      return new TextFile(new File(owner_.getRootDir(), "mutation-report/" + packageName + File.separator + fileName)).read();
-    }
-    catch (IOException exception) {
-      return "Could not read source file: " + owner_.getRootDir().getPath()
-              + "/mutation-report/" + packageName + File.separator + fileName + "\n";
-    }
-  }
-
   private Map<String, MutationReport> readReports() {
     Map<String, MutationReport> reports = new HashMap<String, MutationReport>();
 

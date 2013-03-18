@@ -45,8 +45,8 @@ public class ProjectMutations extends MutationResult {
     Map<String, MutationReport> reports = action_.getReports();
     Map<String, MutationReport> previous = action_.getPreviousAction().getReports();
     for (String moduleName : reports.keySet()) {
-      modules.put(moduleName, new ModuleResult(moduleName, getOwner(), new Pair<MutationReport>(
-              reports.get(moduleName), previous.get(moduleName))));
+      modules.put(moduleName, new ModuleResult(moduleName, getOwner(),
+              new Pair<MutationReport>(reports.get(moduleName), previous.get(moduleName))));
     }
     return modules;
   }

@@ -25,6 +25,10 @@ public abstract class MutationResult {
 
   public abstract Map<String, ? extends MutationResult> getChildMap();
 
+  public boolean isSourceLevel() {
+    return false;
+  }
+
   public Collection<? extends MutationResult> getChildren() {
     return getChildMap().values();
   }
