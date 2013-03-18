@@ -12,6 +12,7 @@ import java.util.Collection;
 public class MutationStatsImpl extends MutationStats {
   public MutationStatsImpl(String title, Collection<Mutation> mutations) {
     title_ = title;
+    if (mutations == null) return;
     for (Mutation m : mutations) {
       if (!m.isDetected()) {
         undetected_++;

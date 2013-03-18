@@ -29,7 +29,7 @@ public class MutatedClass extends MutationResult {
             new MutationStatsImpl(name, mutations),
             new MutationStatsImpl(name, previousMutations));
     MutatedClass product = new MutatedClass(name, owner, stats);
-    product.mutatedLines_ = MutatedLine.createMutatedLines(mutations, previousMutations);
+    product.mutatedLines_ = MutatedLine.createMutatedLines(owner, mutations, previousMutations);
     return new Pair<MutatedClass>(product, new MutatedClass(name, owner, null));
   }
 
@@ -40,7 +40,7 @@ public class MutatedClass extends MutationResult {
             new MutationStatsImpl(name, mutations),
             new MutationStatsImpl(name, previousMutations));
     MutatedClass product = new MutatedClass(name, owner, stats);
-    product.mutatedLines_ = MutatedLine.createMutatedLines(mutations, previousMutations);
+    product.mutatedLines_ = MutatedLine.createMutatedLines(owner, mutations, previousMutations);
     return product;
   }
 
@@ -95,13 +95,6 @@ public class MutatedClass extends MutationResult {
   public String getPackage() {
     return package_;
   }
-
-  private static final Maps.EntryTransformer<Integer, Collection<Mutation>, MutatedLine> lineTransformer_ =
-          new Maps.EntryTransformer<Integer, Collection<Mutation>, MutatedLine>() {
-            public MutatedLine transformEntry(Integer line, Collection<Mutation> mutations) {
-              return new MutatedLine(line, mutations);
-            }
-          };
 
   private String name_;
   private String package_;
