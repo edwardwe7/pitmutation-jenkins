@@ -1,5 +1,7 @@
 package org.jenkinsci.plugins.pitmutation.targets;
 
+import com.google.common.collect.Maps;
+import com.google.common.collect.Ordering;
 import org.jenkinsci.plugins.pitmutation.Mutation;
 
 import java.io.File;
@@ -27,7 +29,7 @@ public class MutatedClass extends MutationResult {
             new MutationStatsImpl(name, mutations),
             new MutationStatsImpl(name, previousMutations));
     MutatedClass product = new MutatedClass(name, owner, stats);
-    product.mutatedLines_ = MutatedLine.createMutatedLines(mutations);
+    product.mutatedLines_ = MutatedLine.createMutatedLines(mutations, previousMutations);
     return new Pair<MutatedClass>(product, new MutatedClass(name, owner, null));
   }
 
@@ -38,7 +40,7 @@ public class MutatedClass extends MutationResult {
             new MutationStatsImpl(name, mutations),
             new MutationStatsImpl(name, previousMutations));
     MutatedClass product = new MutatedClass(name, owner, stats);
-    product.mutatedLines_ = MutatedLine.createMutatedLines(mutations);
+    product.mutatedLines_ = MutatedLine.createMutatedLines(mutations, previousMutations);
     return product;
   }
 
@@ -66,7 +68,7 @@ public class MutatedClass extends MutationResult {
     }
     catch (IOException exception) {
       return "Could not read source file: " + getOwner().getRootDir().getPath()
-              + "/mutation-report/" + package_+ File.separator + fileName_ + "\n";
+              + "/mutation-report/" + package_ + File.separator + fileName_ + "\n";
     }
   }
 
@@ -74,8 +76,12 @@ public class MutatedClass extends MutationResult {
     return "Class: " + getName();
   }
 
-  public Map<String, MutationResult> getChildMap() {
-    return new HashMap<String, MutationResult>();
+  public Map<String, ? extends MutationResult> getChildMap() {
+    return mutatedLines_;
+  }
+
+  public Collection<? extends MutationResult> getChildren() {
+    return Ordering.natural().reverse().sortedCopy(mutatedLines_.values());
   }
 
   public String getName() {
@@ -90,12 +96,15 @@ public class MutatedClass extends MutationResult {
     return package_;
   }
 
-  public Collection<MutatedLine> getMutatedLines() {
-    return mutatedLines_;
-  }
+  private static final Maps.EntryTransformer<Integer, Collection<Mutation>, MutatedLine> lineTransformer_ =
+          new Maps.EntryTransformer<Integer, Collection<Mutation>, MutatedLine>() {
+            public MutatedLine transformEntry(Integer line, Collection<Mutation> mutations) {
+              return new MutatedLine(line, mutations);
+            }
+          };
 
   private String name_;
   private String package_;
   private String fileName_;
-  private Collection<MutatedLine> mutatedLines_;
+  private Map<String, MutatedLine> mutatedLines_;
 }

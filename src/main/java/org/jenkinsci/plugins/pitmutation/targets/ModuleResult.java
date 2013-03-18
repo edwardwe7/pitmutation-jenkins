@@ -28,9 +28,9 @@ public class ModuleResult extends MutationResult implements Serializable  {
             .entriesDiffering();
   }
 
-//  public Collection<Mutation> getMutationsForClass(String className) {
-//    return report_.getMutationsForClassName(className);
-//  }
+  public boolean isCoverageAltered() {
+    return mutationDifference_.size() > 0;
+  }
 
   public String getDisplayName() {
     return "Module: " + getName();
@@ -62,7 +62,8 @@ public class ModuleResult extends MutationResult implements Serializable  {
             public MutatedClass transformEntry(String name, Collection<Mutation> mutations) {
               logger.log(Level.FINER, "found " + reports_.getSecond().getMutationsForClassName(name).size() +
               " reports for " + name);
-              return MutatedClass.create(name, getOwner(), mutations, reports_.getSecond().getMutationsForClassName(name));
+              return MutatedClass.create(name, getOwner(), mutations,
+                      reports_.getSecond().getMutationsForClassName(name));
             }
           };
 

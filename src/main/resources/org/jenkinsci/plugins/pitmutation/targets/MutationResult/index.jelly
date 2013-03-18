@@ -47,6 +47,16 @@
             </j:forEach>
             </table>
 
+            <j:if test="${it.coverageAltered}">
+            <h1>Coverage Changes</h1>
+            <table>
+            <j:forEach var="change" items="${it.mutationChanges}">
+
+
+            </j:forEach>
+            </table>
+            </j:if>
+
             <j:if test="${it.sourceLevel}">
             <h1>Source</h1>
             ${it.sourceFileContent}

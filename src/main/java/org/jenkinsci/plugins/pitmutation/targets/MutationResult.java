@@ -1,5 +1,8 @@
 package org.jenkinsci.plugins.pitmutation.targets;
 
+import com.google.common.base.Function;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Ordering;
 import hudson.model.AbstractBuild;
 import org.jenkinsci.plugins.pitmutation.utils.Pair;
 import org.kohsuke.stapler.StaplerRequest;
@@ -29,8 +32,12 @@ public abstract class MutationResult {
     return false;
   }
 
+  public boolean isCoverageAltered() {
+    return false;
+  }
+
   public Collection<? extends MutationResult> getChildren() {
-    return getChildMap().values();
+    return Ordering.natural().onResultOf(getUndetectedDeltaFunction).reverse().sortedCopy(getChildMap().values());
   }
 
   public MutationStats getMutationStats() {
@@ -47,7 +54,7 @@ public abstract class MutationResult {
         return getChildMap().get(name);
       }
     }
-    return null;
+    return "#";
   }
 
   public MutationResult getChild(String name) {
@@ -76,6 +83,13 @@ public abstract class MutationResult {
     }
     return buf.toString();
   }
+
+  private Function<MutationResult, Integer> getUndetectedDeltaFunction =
+          new Function<MutationResult, Integer>() {
+    public Integer apply(MutationResult result) {
+      return result.getStatsDelta().getUndetected();
+    }
+  };
 
   private AbstractBuild owner_;
   private Pair<MutationStats> stats_;

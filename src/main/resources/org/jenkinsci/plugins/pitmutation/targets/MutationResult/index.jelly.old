@@ -49,7 +49,6 @@
                 </tr>
                 </j:forEach>
                 </table>
-${mutatedClass.sourceFileContent}
 <hr/>
             </j:forEach>
         </l:main-panel>
