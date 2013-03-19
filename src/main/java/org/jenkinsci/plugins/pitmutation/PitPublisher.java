@@ -49,7 +49,7 @@ public class PitPublisher extends Recorder {
     listener_ = listener;
     build_ = build;
 
-    if (build.getResult().isBetterOrEqualTo(Result.SUCCESS)) {
+    if (build.getResult().isBetterOrEqualTo(Result.UNSTABLE)) {
       listener_.getLogger().println("Looking for PIT reports in " + build.getModuleRoot().getRemote());
 
       final FilePath[] moduleRoots = build.getModuleRoots();
@@ -150,7 +150,7 @@ public class PitPublisher extends Recorder {
           MutationStats stats = previousAction.getReport().getMutationStats();
           listener_.getLogger().println("Previous kill ratio was " + stats.getKillPercent() + "%");
           return action.getReport().getMutationStats().getKillPercent() > stats.getKillPercent()
-                  ? Result.FAILURE : Result.SUCCESS;
+                  ? Result.UNSTABLE : Result.SUCCESS;
         }
         else {
           return Result.SUCCESS;
