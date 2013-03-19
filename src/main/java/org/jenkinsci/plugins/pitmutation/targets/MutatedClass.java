@@ -1,7 +1,9 @@
 package org.jenkinsci.plugins.pitmutation.targets;
 
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Ordering;
+import com.google.common.collect.TreeMultimap;
 import org.jenkinsci.plugins.pitmutation.Mutation;
 
 import java.io.File;
@@ -10,6 +12,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import hudson.model.AbstractBuild;
 import hudson.util.TextFile;
@@ -21,32 +27,10 @@ import org.jenkinsci.plugins.pitmutation.utils.Pair;
  */
 public class MutatedClass extends MutationResult {
 
-  public static Pair<MutatedClass> createPair(String name, AbstractBuild owner,
-                                              Collection<Mutation> mutations,
-                                              Collection<Mutation> previousMutations)
-  {
-    Pair<MutationStats> stats = new Pair<MutationStats>(
-            new MutationStatsImpl(name, mutations),
-            new MutationStatsImpl(name, previousMutations));
-    MutatedClass product = new MutatedClass(name, owner, stats);
-    product.mutatedLines_ = MutatedLine.createMutatedLines(owner, mutations, previousMutations);
-    return new Pair<MutatedClass>(product, new MutatedClass(name, owner, null));
-  }
-
-  public static MutatedClass create(String name, AbstractBuild owner,
-                                    Collection<Mutation> mutations,
-                                    Collection<Mutation> previousMutations) {
-    Pair<MutationStats> stats = new Pair<MutationStats>(
-            new MutationStatsImpl(name, mutations),
-            new MutationStatsImpl(name, previousMutations));
-    MutatedClass product = new MutatedClass(name, owner, stats);
-    product.mutatedLines_ = MutatedLine.createMutatedLines(owner, mutations, previousMutations);
-    return product;
-  }
-
-  private MutatedClass(String name, AbstractBuild owner, Pair<MutationStats> stats) {
-    super(owner, stats);
+  public MutatedClass(String name, MutationResult parent, Collection<Mutation> mutations) {
+    super(name, parent);
     name_ = name;
+    mutations_ = mutations;
 
     int lastDot = name.lastIndexOf('.');
     int firstDollar = name.indexOf('$');
@@ -54,6 +38,16 @@ public class MutatedClass extends MutationResult {
     fileName_ = firstDollar >= 0
             ? lastDot >= 0 ? name.substring(lastDot + 1, firstDollar) + ".java.html" : ""
             : lastDot >= 0 ? name.substring(lastDot + 1) + ".java.html" : "";
+
+    mutatedLines_ = createMutatedLines(mutations);
+  }
+
+  private Map<String, MutatedLine> createMutatedLines(Collection<Mutation> mutations) {
+    HashMultimap<String, Mutation> multimap = HashMultimap.create();
+    for (Mutation m : mutations) {
+      multimap.put(String.valueOf(m.getLineNumber()), m);
+    }
+    return Maps.transformEntries(multimap.asMap(), lineTransformer_);
   }
 
   @Override
@@ -71,17 +65,37 @@ public class MutatedClass extends MutationResult {
     }
   }
 
+  private void setLineSourceLinks() {
+    String source = getSourceFileContent();
+    for (String line : mutatedLines_.keySet()) {
+      Pattern p = Pattern.compile("(#.*_"+line+")\\'");
+      Matcher m = p.matcher(source);
+      if (m.find()) {
+        logger_.log(Level.WARNING, "(0) " + m.group(0) + "   (1) " + m.group(1));
+        mutatedLines_.get(line).setUrl(m.group(1));
+      }
+    }
+  }
+
   public String getDisplayName() {
     return "Class: " + getName();
+  }
+
+  @Override
+  public MutationStats getMutationStats() {
+    return new MutationStatsImpl(getName(), mutations_);
   }
 
   public Map<String, MutatedLine> getChildMap() {
     return mutatedLines_;
   }
 
-  public Collection<MutatedLine> getChildren() {
-    return Ordering.natural().reverse().sortedCopy(mutatedLines_.values());
-  }
+  private final Maps.EntryTransformer<String, Collection<Mutation>, MutatedLine> lineTransformer_ =
+          new Maps.EntryTransformer<String, Collection<Mutation>, MutatedLine>() {
+            public MutatedLine transformEntry(String line, Collection<Mutation> mutations) {
+              return new MutatedLine(line, MutatedClass.this, mutations);
+            }
+          };
 
   public String getName() {
     return name_;
@@ -98,5 +112,6 @@ public class MutatedClass extends MutationResult {
   private String name_;
   private String package_;
   private String fileName_;
+  private Collection<Mutation> mutations_;
   private Map<String, MutatedLine> mutatedLines_;
 }

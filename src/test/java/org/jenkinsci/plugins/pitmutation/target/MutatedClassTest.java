@@ -1,0 +1,31 @@
+package org.jenkinsci.plugins.pitmutation.target;
+
+import org.jenkinsci.plugins.pitmutation.Mutation;
+import org.jenkinsci.plugins.pitmutation.targets.MutatedClass;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.Collection;
+
+/**
+ * User: Ed Kimber
+ * Date: 19/03/13
+ * Time: 18:45
+ */
+public class MutatedClassTest extends MutationResultTest {
+
+  @Before
+  public void setup() {
+    Collection<Mutation> mutations = new ArrayList<Mutation>();
+    mutatedClass_ = new MutatedClass("TestClass", null, mutations);
+  }
+
+  @Test
+  public void lineUrlsAreSet() {
+//    super.getResult().getChildMap().get
+//    MutatedClass.create("testClass", null,
+  }
+
+  private MutatedClass mutatedClass_;
+}

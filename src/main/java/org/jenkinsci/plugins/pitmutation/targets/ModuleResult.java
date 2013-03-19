@@ -17,55 +17,53 @@ import org.jenkinsci.plugins.pitmutation.utils.Pair;
  */
 public class ModuleResult extends MutationResult implements Serializable  {
 
-  public ModuleResult(String name, AbstractBuild owner, Pair<MutationReport> reports) {
-    super(owner, new Pair<MutationStats>(
-            reports.getFirst().getMutationStats(),
-            reports.getSecond().getMutationStats()));
-    reports_ = reports;
+  public ModuleResult(String name, MutationResult parent, MutationReport report) {
+    super(name, parent);
     name_ = name;
-    mutationDifference_ = Maps.difference(
-            reports_.getFirst().getSurvivors().asMap(), reports_.getSecond().getSurvivors().asMap())
-            .entriesDiffering();
+    report_ = report;
   }
 
-  public boolean isCoverageAltered() {
-    return mutationDifference_.size() > 0;
-  }
+//  public boolean isCoverageAltered() {
+//    return mutationDifference_.size() > 0;
+//  }
 
   public String getDisplayName() {
     return "Module: " + getName();
   }
 
+  @Override
+  public MutationStats getMutationStats() {
+    return report_.getMutationStats();
+  }
+
   public Map<String, MutatedClass> getChildMap() {
-    return Maps.transformEntries(reports_.getFirst().getMutationsByClass().asMap(), classTransformer);
+    return Maps.transformEntries(report_.getMutationsByClass().asMap(), classTransformer);
   }
 
-  public Collection<MutationStats> getStatsForNewTargets() {
-    return Maps.transformEntries(
-            Maps.difference(
-                    reports_.getFirst().getMutationsByClass().asMap(),
-                    reports_.getSecond().getMutationsByClass().asMap())
-                    .entriesOnlyOnLeft(),
-            statsTransformer_).values();
-  }
+//  public Collection<MutationStats> getStatsForNewTargets() {
+//    return Maps.transformEntries(
+//            Maps.difference(
+//                    reports_.getFirst().getMutationsByClass().asMap(),
+//                    reports_.getSecond().getMutationsByClass().asMap())
+//                    .entriesOnlyOnLeft(),
+//            statsTransformer_).values();
+//  }
 
-  public Collection<Pair<MutatedClass>> getClassesWithNewSurvivors() {
-    return Maps.transformEntries(mutationDifference_, classMutationDifferenceTransform_).values();
-  }
+//  public Collection<Pair<MutatedClass>> getClassesWithNewSurvivors() {
+//    return Maps.transformEntries(mutationDifference_, classMutationDifferenceTransform_).values();
+//  }
 
   public String getName() {
     return name_;
   }
 
   private Maps.EntryTransformer<String, Collection<Mutation>, MutatedClass> classTransformer =
-          new Maps.EntryTransformer<String, Collection<Mutation>, MutatedClass>() {
-            public MutatedClass transformEntry(String name, Collection<Mutation> mutations) {
-              logger.log(Level.FINER, "found " + reports_.getSecond().getMutationsForClassName(name).size() +
-              " reports for " + name);
-              return MutatedClass.create(name, getOwner(), mutations,
-                      reports_.getSecond().getMutationsForClassName(name));
-            }
-          };
+        new Maps.EntryTransformer<String, Collection<Mutation>, MutatedClass>() {
+          public MutatedClass transformEntry(String name, Collection<Mutation> mutations) {
+            logger.log(Level.FINER, "found " + report_.getMutationsForClassName(name).size() + " reports for " + name);
+            return new MutatedClass(name, ModuleResult.this, report_.getMutationsForClassName(name));
+          }
+        };
 
   private static final Maps.EntryTransformer<String, Collection<Mutation>, MutationStats> statsTransformer_ =
           new Maps.EntryTransformer<String, Collection<Mutation>, MutationStats>() {
@@ -74,16 +72,17 @@ public class ModuleResult extends MutationResult implements Serializable  {
             }
           };
 
-  private Maps.EntryTransformer<String, MapDifference.ValueDifference<Collection<Mutation>>, Pair<MutatedClass>> classMutationDifferenceTransform_ =
-          new Maps.EntryTransformer<String, MapDifference.ValueDifference<Collection<Mutation>>, Pair<MutatedClass>>() {
-            public Pair<MutatedClass> transformEntry(String name, MapDifference.ValueDifference<Collection<Mutation>> value) {
-              return MutatedClass.createPair(name, getOwner(), value.leftValue(), value.rightValue());
-            }
-          };
+
+//  private Maps.EntryTransformer<String, MapDifference.ValueDifference<Collection<Mutation>>, Pair<MutatedClass>> classMutationDifferenceTransform_ =
+//          new Maps.EntryTransformer<String, MapDifference.ValueDifference<Collection<Mutation>>, Pair<MutatedClass>>() {
+//            public Pair<MutatedClass> transformEntry(String name, MapDifference.ValueDifference<Collection<Mutation>> value) {
+////              return MutatedClass.createPair(name, getOwner(), value.leftValue(), value.rightValue());
+//            }
+//          };
 
   private static final Logger logger = Logger.getLogger(ModuleResult.class.getName());
 
   private Map<String,MapDifference.ValueDifference<Collection<Mutation>>> mutationDifference_;
-  private Pair<MutationReport> reports_;
+  private MutationReport report_;
   private String name_;
 }

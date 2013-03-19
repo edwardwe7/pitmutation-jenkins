@@ -20,7 +20,7 @@
   </f:entry>
   <f:entry title="Kill ratio must improve"
            field="killRatioMustImprove"
-           description="The build will be marked unstable unless the ratio of mutation kills is greater than or equal to the last build.">
+           description="The build will be marked unstable if the kill ratio is lower than the last build.">
     <f:checkbox />
   </f:entry>
 </j:jelly>

@@ -6,6 +6,7 @@ import org.jenkinsci.plugins.pitmutation.PitBuildAction;
 import org.jenkinsci.plugins.pitmutation.targets.ModuleResult;
 import org.jenkinsci.plugins.pitmutation.targets.MutatedClass;
 import org.jenkinsci.plugins.pitmutation.targets.MutationStats;
+import org.jenkinsci.plugins.pitmutation.targets.ProjectMutations;
 import org.jenkinsci.plugins.pitmutation.utils.Pair;
 import org.junit.Before;
 import org.junit.Test;
@@ -47,7 +48,8 @@ public class MutationResultTest {
     when(previousBuildAction_.getReports()).thenReturn(reportsOld);
     when(buildAction_.getPreviousAction()).thenReturn(previousBuildAction_);
 
-    result_ = new ModuleResult("test_module", null, new Pair<MutationReport>(reportNew, reportOld));
+    ProjectMutations project = new ProjectMutations(buildAction_);
+    result_ = new ModuleResult("test_module", project, reportNew);
   }
 
 //  @Test
@@ -100,6 +102,10 @@ public class MutationResultTest {
 //    assertThat(stats.getTotalMutations(), is(1));
 //    assertThat(stats.getUndetected(), is(1));
 //  }
+
+  public ModuleResult getResult() {
+    return result_;
+  }
 
   private ModuleResult result_;
 }

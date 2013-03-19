@@ -1,32 +1,45 @@
 package org.jenkinsci.plugins.pitmutation.targets;
 
-import com.google.common.base.Function;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Ordering;
 import hudson.model.AbstractBuild;
-import org.jenkinsci.plugins.pitmutation.utils.Pair;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
+import java.util.logging.Logger;
 
 /**
- * User: Ed Kimber
+ * @author Ed Kimber
  */
-public abstract class MutationResult<C extends MutationResult> {
+public abstract class MutationResult implements Comparable {
 
-  public MutationResult(AbstractBuild owner, Pair<MutationStats> stats) {
-    owner_ = owner;
-    stats_ = stats;
+  public MutationResult(String name, MutationResult parent) {
+    parent_ = parent;
+    name_ = name;
+    owner_ = parent == null ? null : parent.getOwner();
   }
 
-  public abstract String getName();
+  public String getName() {
+    return name_;
+  }
+
+  public MutationResult getPreviousResult() {
+    if (parent_ == null) {
+      return null;
+    }
+    else {
+      MutationResult previous = parent_.getPreviousResult();
+      return previous == null ? null : previous.getChildMap().get(name_);
+    }
+  }
 
   public abstract String getDisplayName();
 
-  public abstract Map<String, C> getChildMap();
+  public abstract MutationStats getMutationStats();
+
+  public abstract Map<String, ? extends MutationResult> getChildMap();
 
   public boolean isSourceLevel() {
     return false;
@@ -36,16 +49,17 @@ public abstract class MutationResult<C extends MutationResult> {
     return false;
   }
 
-  public Collection<C> getChildren() {
-    return Ordering.natural().onResultOf(getUndetectedDeltaFunction).reverse().sortedCopy(getChildMap().values());
+  public Collection<? extends MutationResult> getChildren() {
+    return Ordering.natural().reverse().sortedCopy(getChildMap().values());
   }
 
-  public MutationStats getMutationStats() {
-    return stats_.getFirst();
+  public int compareTo(Object o) {
+    return getMutationStats().getUndetected() - ((MutationResult) o).getMutationStats().getUndetected();
   }
 
   public MutationStats getStatsDelta() {
-    return stats_.getFirst().delta(stats_.getSecond());
+    MutationResult previous = getPreviousResult();
+    return previous == null ? getMutationStats() : getMutationStats().delta(previous.getMutationStats());
   }
 
   public Object getDynamic(String token, StaplerRequest req, StaplerResponse rsp) throws IOException {
@@ -57,11 +71,7 @@ public abstract class MutationResult<C extends MutationResult> {
     return "#";
   }
 
-  public MutationResult getChild(String name) {
-    return getChildMap().get(name.toLowerCase());
-  }
-
-  public AbstractBuild getOwner() {
+  public AbstractBuild<?,?> getOwner() {
     return owner_;
   }
 
@@ -84,13 +94,21 @@ public abstract class MutationResult<C extends MutationResult> {
     return buf.toString();
   }
 
-  private Function<MutationResult, Integer> getUndetectedDeltaFunction =
-          new Function<MutationResult, Integer>() {
-    public Integer apply(MutationResult result) {
-      return result.getStatsDelta().getUndetected();
-    }
-  };
+//  public void setUrl(String url) {
+//    this.url_ = url;
+//  }
+
+//  private String url_;
+//  private Function<MutationResult, Integer> getUndetectedDeltaFunction =
+//          new Function<MutationResult, Integer>() {
+//    public Integer apply(MutationResult result) {
+//      return result.getStatsDelta().getUndetected();
+//    }
+//  };
+
+  static final Logger logger_ = Logger.getLogger(MutationResult.class.getName());
 
   private AbstractBuild owner_;
-  private Pair<MutationStats> stats_;
+  private MutationResult parent_;
+  private String name_;
 }

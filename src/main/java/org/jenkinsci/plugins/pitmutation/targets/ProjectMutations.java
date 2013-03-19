@@ -1,14 +1,13 @@
 package org.jenkinsci.plugins.pitmutation.targets;
 
+import com.google.common.collect.Maps;
+import hudson.model.AbstractBuild;
 import org.jenkinsci.plugins.pitmutation.Mutation;
 import org.jenkinsci.plugins.pitmutation.MutationReport;
 import org.jenkinsci.plugins.pitmutation.PitBuildAction;
-import org.jenkinsci.plugins.pitmutation.utils.Pair;
 
-import javax.management.monitor.StringMonitor;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -16,13 +15,23 @@ import java.util.Map;
  */
 public class ProjectMutations extends MutationResult {
   public ProjectMutations(PitBuildAction action) {
-    super(action.getOwner(),
-            new Pair<MutationStats>(
-            aggregateStats(action.getReports().values()),
-            aggregateStats(action.getPreviousAction().getReports().values())));
+    super("aggregate", null);
     action_ = action;
   }
 
+  @Override
+  public AbstractBuild<?,?> getOwner() {
+    return action_.getOwner();
+  }
+
+  public MutationResult getPreviousResult() {
+    return action_.getPreviousAction().getReport();
+  }
+
+  @Override
+  public MutationStats getMutationStats() {
+    return aggregateStats(action_.getReports().values());
+  }
 
   private static MutationStats aggregateStats(Collection<MutationReport> reports) {
     MutationStats stats = new MutationStatsImpl("", new ArrayList<Mutation>(0));
@@ -32,6 +41,7 @@ public class ProjectMutations extends MutationResult {
     return stats;
   }
 
+  @Override
   public String getName() {
     return "Aggregated Reports";
   }
@@ -40,16 +50,16 @@ public class ProjectMutations extends MutationResult {
     return "Modules";
   }
 
-  public Map<String, ModuleResult> getChildMap() {
-    Map<String, ModuleResult> modules = new HashMap<String, ModuleResult>();
-    Map<String, MutationReport> reports = action_.getReports();
-    Map<String, MutationReport> previous = action_.getPreviousAction().getReports();
-    for (String moduleName : reports.keySet()) {
-      modules.put(moduleName, new ModuleResult(moduleName, getOwner(),
-              new Pair<MutationReport>(reports.get(moduleName), previous.get(moduleName))));
-    }
-    return modules;
+  public Map<String, ? extends MutationResult> getChildMap() {
+    return Maps.transformEntries(action_.getReports(), moduleTransformer_);
   }
+
+  private Maps.EntryTransformer<String, MutationReport, ModuleResult> moduleTransformer_ =
+          new Maps.EntryTransformer<String, MutationReport, ModuleResult>() {
+    public ModuleResult transformEntry(String moduleName, MutationReport report) {
+      return new ModuleResult(moduleName, ProjectMutations.this, report);
+    }
+  };
 
   private PitBuildAction action_;
 }

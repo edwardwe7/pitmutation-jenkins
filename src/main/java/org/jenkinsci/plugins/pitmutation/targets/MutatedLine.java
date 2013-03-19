@@ -8,40 +8,17 @@ import org.jenkinsci.plugins.pitmutation.utils.Pair;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 
 /**
  * @author edward
  */
 public class MutatedLine extends MutationResult implements Comparable {
 
-  private static Multimap<String, Mutation> multimapPrevious_;
-  private static AbstractBuild owner_;
-  public static Map<String, MutatedLine> createMutatedLines(AbstractBuild owner,
-          Collection<Mutation> mutations, Collection<Mutation> previousMutations)
-  {
-    owner_ = owner;
-    Multimap<String, Mutation> multimapLines = createMultimap(mutations);
-    multimapPrevious_ = createMultimap(previousMutations);
-    return Maps.transformEntries(multimapLines.asMap(), lineTransformer_);
-  }
-
-  private static Multimap<String, Mutation> createMultimap(Collection<Mutation> mutations) {
-    TreeMultimap<String, Mutation> multimap = TreeMultimap.create(Ordering.natural(), Ordering.arbitrary());
-    for (Mutation m : mutations) {
-      multimap.put(String.valueOf(m.getLineNumber()), m);
-    }
-    return multimap;
-  }
-
-  public MutatedLine(int lineNumber, Collection<Mutation> mutations, Collection<Mutation> previousMutations) {
-    super(owner_, new Pair<MutationStats>(
-            new MutationStatsImpl("line", mutations), new MutationStatsImpl("line", previousMutations)));
-    lineNumber_ = lineNumber;
+  public MutatedLine(String line, MutationResult parent, Collection<Mutation> mutations) {
+    super(line, parent);
     mutations_ = mutations;
-  }
-
-  public int getLineNumber() {
-    return lineNumber_;
+    lineNumber_ = Integer.valueOf(line);
   }
 
   public Collection<Mutation> getMutations() {
@@ -51,16 +28,6 @@ public class MutatedLine extends MutationResult implements Comparable {
   public int getMutationCount() {
     return mutations_.size();
   }
-
-  private int lineNumber_;
-  private Collection<Mutation> mutations_;
-
-  private static final Maps.EntryTransformer<String, Collection<Mutation>, MutatedLine> lineTransformer_ =
-          new Maps.EntryTransformer<String, Collection<Mutation>, MutatedLine>() {
-            public MutatedLine transformEntry(String line, Collection<Mutation> mutations) {
-              return new MutatedLine(Integer.parseInt(line), mutations, multimapPrevious_.asMap().get(line));
-            }
-          };
 
   public int compareTo(Object o) {
     return ((MutatedLine) o).lineNumber_ - lineNumber_;
@@ -77,7 +44,27 @@ public class MutatedLine extends MutationResult implements Comparable {
   }
 
   @Override
-  public Map<String, Mutation> getChildMap() {
-    return new HashMap<String, Mutation>();
+  public MutationStats getMutationStats() {
+    return new MutationStatsImpl(getName(), mutations_);
   }
+
+  @Override
+  public Map<String, MutationResult> getChildMap() {
+    return new HashMap<String, MutationResult>();
+  }
+
+  public String getChildUrl() {
+    logger_.log(Level.WARNING, "getChildUrl: " + url_);
+    return url_;
+  }
+
+  public void setUrl(String url) {
+    url_ = url;
+    logger_.log(Level.WARNING, "setUrl: " + url_);
+
+  }
+
+  private int lineNumber_;
+  private Collection<Mutation> mutations_;
+  private String url_;
 }
