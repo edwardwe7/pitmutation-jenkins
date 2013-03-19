@@ -149,7 +149,7 @@ public class PitPublisher extends Recorder {
         if (previousAction != null) {
           MutationStats stats = previousAction.getReport().getMutationStats();
           listener_.getLogger().println("Previous kill ratio was " + stats.getKillPercent() + "%");
-          return action.getReport().getMutationStats().getKillPercent() > stats.getKillPercent()
+          return action.getReport().getMutationStats().getKillPercent() <= stats.getKillPercent()
                   ? Result.UNSTABLE : Result.SUCCESS;
         }
         else {
