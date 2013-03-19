@@ -75,11 +75,11 @@ public class MutatedClass extends MutationResult {
     return "Class: " + getName();
   }
 
-  public Map<String, ? extends MutationResult> getChildMap() {
+  public Map<String, MutatedLine> getChildMap() {
     return mutatedLines_;
   }
 
-  public Collection<? extends MutationResult> getChildren() {
+  public Collection<MutatedLine> getChildren() {
     return Ordering.natural().reverse().sortedCopy(mutatedLines_.values());
   }
 

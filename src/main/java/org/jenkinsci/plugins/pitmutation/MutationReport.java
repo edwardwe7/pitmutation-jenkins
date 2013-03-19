@@ -53,10 +53,6 @@ public class MutationReport {
     return mutationsByClass_;
   }
 
-  public Collection<MutatedLine> getMutatedLinesForClass(String className) {
-    return lineMutationsByClass_.get(className);
-  }
-
   public Multimap<String, Mutation> getSurvivors() {
     return Multimaps.filterValues(mutationsByClass_, isSurvivor_);
   }
@@ -65,8 +61,6 @@ public class MutationReport {
     Collection<Mutation> mutations = mutationsByClass_.get(className);
     return mutations != null ? mutations : EMPTY_SET;
   }
-
-
 
   public MutationStats getMutationStats() {
     return new MutationStats() {

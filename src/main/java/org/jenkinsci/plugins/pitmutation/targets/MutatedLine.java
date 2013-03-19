@@ -26,7 +26,7 @@ public class MutatedLine extends MutationResult implements Comparable {
   }
 
   private static Multimap<String, Mutation> createMultimap(Collection<Mutation> mutations) {
-    Multimap<String, Mutation> multimap = TreeMultimap.create(Ordering.natural(), Ordering.arbitrary());
+    TreeMultimap<String, Mutation> multimap = TreeMultimap.create(Ordering.natural(), Ordering.arbitrary());
     for (Mutation m : mutations) {
       multimap.put(String.valueOf(m.getLineNumber()), m);
     }
@@ -77,7 +77,7 @@ public class MutatedLine extends MutationResult implements Comparable {
   }
 
   @Override
-  public Map<String, ? extends MutationResult> getChildMap() {
-    return new HashMap<String, MutationResult>();
+  public Map<String, Mutation> getChildMap() {
+    return new HashMap<String, Mutation>();
   }
 }

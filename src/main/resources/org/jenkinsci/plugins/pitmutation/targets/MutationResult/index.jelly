@@ -6,7 +6,9 @@
             <h1>${it.displayName}</h1>
             <h2>Mutation Statistics</h2>
             <table>
-            <tr><th>Mutations</th><th>Undetected</th><th>Coverage</th></tr>
+            <tr>
+            <th>Mutations</th><th>Undetected</th><th>Coverage</th>
+            </tr>
             <tr>
               <td>
                 ${it.mutationStats.totalMutations}
@@ -25,7 +27,10 @@
 
             <h2>Components</h2>
             <table>
-            <tr><th>Name</th><th>Mutations</th><th>Undetected</th><th>Coverage</th></tr>
+            <tr>
+            <th>Name</th><th>Mutations</th><th>Undetected</th><th>Coverage</th>
+            <j:if test="${it.sourceLevel}"><th>Mutations</th></j:if>
+            </tr>
             <j:forEach var="child" items="${it.children}">
             <tr>
               <td>
@@ -43,6 +48,13 @@
                 ${child.mutationStats.killPercent}&#37;
                 (<j:if test="${child.statsDelta.killPercent &gt; 0}">+</j:if>${child.statsDelta.killPercent}&#37;)
               </td>
+              <j:if test="${it.sourceLevel}">
+              <td>
+                <j:forEach var="mutation" items="${child.mutations}">
+                  ${mutation.mutatorClass}&#160;
+                </j:forEach>
+              </td>
+              </j:if>
             </tr>
             </j:forEach>
             </table>
@@ -50,7 +62,7 @@
             <j:if test="${it.coverageAltered}">
             <h1>Coverage Changes</h1>
             <table>
-            <j:forEach var="change" items="${it.mutationChanges}">
+            <j:forEach var="change" items="${it.coverageChanges}">
             </j:forEach>
             </table>
             </j:if>

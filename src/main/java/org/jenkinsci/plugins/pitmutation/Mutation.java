@@ -1,5 +1,9 @@
 package org.jenkinsci.plugins.pitmutation;
 
+import org.jenkinsci.plugins.pitmutation.targets.MutationResult;
+
+import java.util.Map;
+
 /**
  * @author edward
  */
@@ -78,7 +82,10 @@ public class Mutation {
 
   public String getMutatorClass() {
     int lastDot = mutator_.lastIndexOf('.');
-    return mutator_.substring(lastDot + 1);
+    String className = mutator_.substring(lastDot + 1);
+    return className.endsWith("Mutator")
+            ? className.substring(0, className.length() - 7)
+            : className;
   }
 
   public void setMutator(final String mutator) {

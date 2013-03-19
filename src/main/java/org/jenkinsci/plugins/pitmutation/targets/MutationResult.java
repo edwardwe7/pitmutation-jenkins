@@ -15,7 +15,7 @@ import java.util.Map;
 /**
  * User: Ed Kimber
  */
-public abstract class MutationResult {
+public abstract class MutationResult<C extends MutationResult> {
 
   public MutationResult(AbstractBuild owner, Pair<MutationStats> stats) {
     owner_ = owner;
@@ -26,7 +26,7 @@ public abstract class MutationResult {
 
   public abstract String getDisplayName();
 
-  public abstract Map<String, ? extends MutationResult> getChildMap();
+  public abstract Map<String, C> getChildMap();
 
   public boolean isSourceLevel() {
     return false;
@@ -36,7 +36,7 @@ public abstract class MutationResult {
     return false;
   }
 
-  public Collection<? extends MutationResult> getChildren() {
+  public Collection<C> getChildren() {
     return Ordering.natural().onResultOf(getUndetectedDeltaFunction).reverse().sortedCopy(getChildMap().values());
   }
 
