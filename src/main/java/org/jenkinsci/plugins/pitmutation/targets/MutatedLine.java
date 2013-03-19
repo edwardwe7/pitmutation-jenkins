@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author edward
@@ -49,18 +51,17 @@ public class MutatedLine extends MutationResult implements Comparable {
     return new HashMap<String, MutationResult>();
   }
 
-  public String getChildUrl() {
-    logger_.log(Level.WARNING, "getChildUrl: " + url_);
-    return url_;
-  }
-
-  public void setUrl(String url) {
-    url_ = url;
-    logger_.log(Level.WARNING, "setUrl: " + url_);
-
+  public String getUrl() {
+    String source = getParent().getSourceFileContent();
+    Pattern p = Pattern.compile("(#org.*_" + getName() + ")\\'");
+    Matcher m = p.matcher(source);
+    if (m.find()) {
+      logger_.log(Level.WARNING, "(0) " + m.group(0) + "   (1) " + m.group(1));
+      return m.group(1);
+    }
+    return super.getUrl();
   }
 
   private int lineNumber_;
   private Collection<Mutation> mutations_;
-  private String url_;
 }

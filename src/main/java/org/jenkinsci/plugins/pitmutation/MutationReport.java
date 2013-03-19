@@ -18,7 +18,6 @@ public class MutationReport {
 
   public MutationReport() {
     mutationsByClass_ = HashMultimap.create();
-    lineMutationsByClass_ = HashMultimap.create();
   }
 
   public static MutationReport create(InputStream xmlReport) throws IOException, SAXException {
@@ -41,7 +40,6 @@ public class MutationReport {
     if (mutation.isDetected()) {
       killCount_++;
     }
-    mutationCount_++;
   }
 
   //---
@@ -66,11 +64,11 @@ public class MutationReport {
       }
 
       public int getUndetected() {
-        return mutationCount_ - killCount_;
+        return getTotalMutations() - killCount_;
       }
 
       public int getTotalMutations() {
-        return mutationCount_;
+        return mutationsByClass_.values().size();
       }
     };
   }
@@ -83,8 +81,6 @@ public class MutationReport {
 
   private static final Set<Mutation> EMPTY_SET = new HashSet<Mutation>();
 
-  private Multimap<String, MutatedLine> lineMutationsByClass_;
   private Multimap<String, Mutation> mutationsByClass_;
   private int killCount_ = 0;
-  private int mutationCount_ = 0;
 }

@@ -22,7 +22,7 @@ public abstract class MutationStats {
 
   private float round(float ratio) {
     //TODO NaN mutation test
-    if (Float.isNaN(ratio)) return Float.NaN;
+    if (Float.isNaN(ratio) || Float.isInfinite(ratio)) return ratio;
     BigDecimal bd = new BigDecimal(ratio);
     BigDecimal rounded = bd.setScale(3, BigDecimal.ROUND_HALF_UP);
     return rounded.floatValue();

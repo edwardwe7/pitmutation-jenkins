@@ -25,6 +25,10 @@ public abstract class MutationResult implements Comparable {
     return name_;
   }
 
+  public MutationResult getParent() {
+    return parent_;
+  }
+
   public MutationResult getPreviousResult() {
     if (parent_ == null) {
       return null;
@@ -43,6 +47,10 @@ public abstract class MutationResult implements Comparable {
 
   public boolean isSourceLevel() {
     return false;
+  }
+
+  public String getSourceFileContent() {
+    return "";
   }
 
   public boolean isCoverageAltered() {

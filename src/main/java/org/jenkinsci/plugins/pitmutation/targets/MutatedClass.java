@@ -57,18 +57,6 @@ public class MutatedClass extends MutationResult {
     }
   }
 
-  private void setLineSourceLinks() {
-    String source = getSourceFileContent();
-    for (String line : mutatedLines_.keySet()) {
-      Pattern p = Pattern.compile("(#.*_"+line+")\\'");
-      Matcher m = p.matcher(source);
-      if (m.find()) {
-        logger_.log(Level.WARNING, "(0) " + m.group(0) + "   (1) " + m.group(1));
-        mutatedLines_.get(line).setUrl(m.group(1));
-      }
-    }
-  }
-
   public String getDisplayName() {
     return "Class: " + getName();
   }
