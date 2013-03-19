@@ -12,7 +12,6 @@ import hudson.model.HealthReport;
 import hudson.model.HealthReportingAction;
 import org.xml.sax.SAXException;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -84,10 +83,6 @@ public class PitBuildAction implements HealthReportingAction, StaplerProxy {
     }
     return reports;
   }
-
-//  public Ratio getKillRatio() {
-//    return report_.getKillRatio();
-//  }
 
   public HealthReport getBuildHealth() {
     return new HealthReport((int) getReport().getMutationStats().getKillPercent(),

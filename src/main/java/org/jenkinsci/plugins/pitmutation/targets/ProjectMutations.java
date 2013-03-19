@@ -11,7 +11,7 @@ import java.util.Collection;
 import java.util.Map;
 
 /**
- * User: Ed Kimber
+ * @author Ed Kimber
  */
 public class ProjectMutations extends MutationResult {
   public ProjectMutations(PitBuildAction action) {

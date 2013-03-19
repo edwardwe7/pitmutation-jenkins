@@ -23,8 +23,7 @@ public class MutatedClassTest extends MutationResultTest {
 
   @Test
   public void lineUrlsAreSet() {
-//    super.getResult().getChildMap().get
-//    MutatedClass.create("testClass", null,
+
   }
 
   private MutatedClass mutatedClass_;

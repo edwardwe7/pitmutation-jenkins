@@ -2,28 +2,20 @@ package org.jenkinsci.plugins.pitmutation.targets;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Ordering;
-import com.google.common.collect.TreeMultimap;
 import org.jenkinsci.plugins.pitmutation.Mutation;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import hudson.model.AbstractBuild;
 import hudson.util.TextFile;
-import org.jenkinsci.plugins.pitmutation.PitBuildAction;
-import org.jenkinsci.plugins.pitmutation.utils.Pair;
 
 /**
- * User: Ed Kimber
+ * @author Ed Kimber
  */
 public class MutatedClass extends MutationResult {
 

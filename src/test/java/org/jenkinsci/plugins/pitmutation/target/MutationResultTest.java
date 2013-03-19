@@ -1,13 +1,11 @@
 package org.jenkinsci.plugins.pitmutation.target;
 
-import org.jenkinsci.plugins.pitmutation.Mutation;
 import org.jenkinsci.plugins.pitmutation.MutationReport;
 import org.jenkinsci.plugins.pitmutation.PitBuildAction;
 import org.jenkinsci.plugins.pitmutation.targets.ModuleResult;
 import org.jenkinsci.plugins.pitmutation.targets.MutatedClass;
 import org.jenkinsci.plugins.pitmutation.targets.MutationStats;
 import org.jenkinsci.plugins.pitmutation.targets.ProjectMutations;
-import org.jenkinsci.plugins.pitmutation.utils.Pair;
 import org.junit.Before;
 import org.junit.Test;
 import org.xml.sax.SAXException;

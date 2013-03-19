@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -30,7 +28,8 @@ public class MutationReportTest {
   @Test
   public void countsKills() throws IOException, SAXException {
     MutationReport report =  MutationReport.create(mutationsXml_[0]);
-    assertThat(report.getKillRatio(), is(new Ratio(5,16)));
+    assertThat(report.getMutationStats().getKillCount(), is(5));
+    assertThat(report.getMutationStats().getTotalMutations(), is(16));
   }
 
   @Test

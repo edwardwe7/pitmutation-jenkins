@@ -3,9 +3,7 @@ package org.jenkinsci.plugins.pitmutation.targets;
 import java.math.BigDecimal;
 
 /**
- * User: Ed Kimber
- * Date: 15/03/13
- * Time: 21:22
+ * @author  Ed Kimber
  */
 public abstract class MutationStats {
   public abstract String getTitle();

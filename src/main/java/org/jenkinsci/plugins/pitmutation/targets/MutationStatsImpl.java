@@ -5,9 +5,7 @@ import org.jenkinsci.plugins.pitmutation.Mutation;
 import java.util.Collection;
 
 /**
- * User: Ed Kimber
- * Date: 14/03/13
- * Time: 21:49
+ * @author  Ed Kimber
  */
 public class MutationStatsImpl extends MutationStats {
   public MutationStatsImpl(String title, Collection<Mutation> mutations) {

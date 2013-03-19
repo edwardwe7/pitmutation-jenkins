@@ -94,18 +94,6 @@ public abstract class MutationResult implements Comparable {
     return buf.toString();
   }
 
-//  public void setUrl(String url) {
-//    this.url_ = url;
-//  }
-
-//  private String url_;
-//  private Function<MutationResult, Integer> getUndetectedDeltaFunction =
-//          new Function<MutationResult, Integer>() {
-//    public Integer apply(MutationResult result) {
-//      return result.getStatsDelta().getUndetected();
-//    }
-//  };
-
   static final Logger logger_ = Logger.getLogger(MutationResult.class.getName());
 
   private AbstractBuild owner_;

@@ -41,13 +41,10 @@ public class MutationReport {
     if (mutation.isDetected()) {
       killCount_++;
     }
+    mutationCount_++;
   }
 
   //---
-
-  public Ratio getKillRatio() {
-    return new Ratio(killCount_, mutationsByClass_.values().size());
-  }
 
   public Multimap<String, Mutation> getMutationsByClass() {
     return mutationsByClass_;
@@ -69,11 +66,11 @@ public class MutationReport {
       }
 
       public int getUndetected() {
-        return (int) getKillRatio().getDenominator() - (int) getKillRatio().getNumerator();
+        return mutationCount_ - killCount_;
       }
 
       public int getTotalMutations() {
-        return (int) getKillRatio().getDenominator();
+        return mutationCount_;
       }
     };
   }
@@ -89,4 +86,5 @@ public class MutationReport {
   private Multimap<String, MutatedLine> lineMutationsByClass_;
   private Multimap<String, Mutation> mutationsByClass_;
   private int killCount_ = 0;
+  private int mutationCount_ = 0;
 }

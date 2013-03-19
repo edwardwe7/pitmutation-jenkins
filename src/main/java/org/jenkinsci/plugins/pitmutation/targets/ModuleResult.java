@@ -6,11 +6,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.google.common.collect.*;
-import hudson.model.AbstractBuild;
 import org.jenkinsci.plugins.pitmutation.Mutation;
 import org.jenkinsci.plugins.pitmutation.MutationReport;
-import org.jenkinsci.plugins.pitmutation.PitBuildAction;
-import org.jenkinsci.plugins.pitmutation.utils.Pair;
 
 /**
  * @author edward
@@ -22,10 +19,6 @@ public class ModuleResult extends MutationResult implements Serializable  {
     name_ = name;
     report_ = report;
   }
-
-//  public boolean isCoverageAltered() {
-//    return mutationDifference_.size() > 0;
-//  }
 
   public String getDisplayName() {
     return "Module: " + getName();

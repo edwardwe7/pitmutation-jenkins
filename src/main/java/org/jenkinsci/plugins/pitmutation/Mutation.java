@@ -1,9 +1,5 @@
 package org.jenkinsci.plugins.pitmutation;
 
-import org.jenkinsci.plugins.pitmutation.targets.MutationResult;
-
-import java.util.Map;
-
 /**
  * @author edward
  */
