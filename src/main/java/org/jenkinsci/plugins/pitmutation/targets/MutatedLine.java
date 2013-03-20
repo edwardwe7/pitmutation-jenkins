@@ -4,7 +4,6 @@ import org.jenkinsci.plugins.pitmutation.Mutation;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -56,7 +55,6 @@ public class MutatedLine extends MutationResult implements Comparable {
     Pattern p = Pattern.compile("(#org.*_" + getName() + ")\\'");
     Matcher m = p.matcher(source);
     if (m.find()) {
-      logger_.log(Level.WARNING, "(0) " + m.group(0) + "   (1) " + m.group(1));
       return m.group(1);
     }
     return super.getUrl();

@@ -2,10 +2,7 @@ package org.jenkinsci.plugins.pitmutation.target;
 
 import org.jenkinsci.plugins.pitmutation.MutationReport;
 import org.jenkinsci.plugins.pitmutation.PitBuildAction;
-import org.jenkinsci.plugins.pitmutation.targets.ModuleResult;
-import org.jenkinsci.plugins.pitmutation.targets.MutatedClass;
-import org.jenkinsci.plugins.pitmutation.targets.MutationStats;
-import org.jenkinsci.plugins.pitmutation.targets.ProjectMutations;
+import org.jenkinsci.plugins.pitmutation.targets.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.xml.sax.SAXException;
@@ -14,17 +11,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assume.assumeThat;
+import static org.mockito.Matchers.isNotNull;
+import static org.mockito.Matchers.notNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
- * User: Ed Kimber
- * Date: 14/03/13
- * Time: 21:42
+ * @author Ed Kimber
  */
 public class MutationResultTest {
   @Before
@@ -42,14 +38,44 @@ public class MutationResultTest {
 
     PitBuildAction buildAction_ = mock(PitBuildAction.class);
     when(buildAction_.getReports()).thenReturn(reportsNew);
+
     PitBuildAction previousBuildAction_ = mock(PitBuildAction.class);
     when(previousBuildAction_.getReports()).thenReturn(reportsOld);
+    when(previousBuildAction_.getReport()).thenReturn(new ProjectMutations(previousBuildAction_));
+
     when(buildAction_.getPreviousAction()).thenReturn(previousBuildAction_);
 
-    ProjectMutations project = new ProjectMutations(buildAction_);
-    result_ = new ModuleResult("test_module", project, reportNew);
+
+    projectResult_ = new ProjectMutations(buildAction_);
+    moduleResult_ = projectResult_.getChildMap().get("test_report");
+    assertThat(moduleResult_, not(nullValue()));
+    assertThat(projectResult_.getPreviousResult(), not(nullValue()));
   }
 
+  @Test
+  public void mutationResultStatsDelta() {
+    MutationStats delta = projectResult_.getStatsDelta();
+    assertThat(delta.getTotalMutations(), is(3));
+    assertThat(delta.getKillCount(), is(-1));
+  }
+
+  @Test
+  public void classResultsOrdered() {
+    Iterator<? extends MutationResult> classes = moduleResult_.getChildren().iterator();
+    int undetected = classes.next().getMutationStats().getUndetected();
+
+    while(classes.hasNext()) {
+      MutationResult result = classes.next();
+      assertThat(result.getMutationStats().getUndetected(), lessThan(undetected));
+      undetected = result.getMutationStats().getUndetected();
+    }
+  }
+
+  @Test
+  public void urlTransformName() {
+    assertThat(moduleResult_.getChildMap().get("org.jenkinsci.plugins.pitmutation.PitParser").getUrl(),
+            is("org_jenkinsci_plugins_pitmutation_PitParser"));
+  }
 //  @Test
 //  public void findsClassesWithNewSurvivors() {
 //    Collection<MutatedClass> survivors = result_.getClassesWithNewSurvivors();
@@ -80,16 +106,25 @@ public class MutationResultTest {
 
     @Test
     public void findsMutationsOnPitParserClass() {
-      MutatedClass pitParser = result_.getChildMap().get("org.jenkinsci.plugins.pitmutation.PitParser");
+      MutationResult pitParser = moduleResult_.getChildMap().get("org.jenkinsci.plugins.pitmutation.PitParser");
       assertThat(pitParser.getChildren(), hasSize(3));
     }
 
     @Test
     public void collectsMutationStats() {
-      MutationStats stats = result_.getMutationStats();
+      MutationStats stats = projectResult_.getMutationStats();
       assertThat(stats.getTotalMutations(), is(19));
       assertThat(stats.getUndetected(), is(15));
     }
+
+  @Test
+  public void correctSourceLevels() {
+    MutationResult pitParser = moduleResult_.getChildMap().get("org.jenkinsci.plugins.pitmutation.PitParser");
+
+    assertThat(projectResult_.isSourceLevel(), is(false));
+    assertThat(moduleResult_.isSourceLevel(), is(false));
+    assertThat(pitParser.isSourceLevel(), is(true));
+  }
 //
 //  @Test
 //  public void collectsStatsOnNewTargets() {
@@ -101,9 +136,6 @@ public class MutationResultTest {
 //    assertThat(stats.getUndetected(), is(1));
 //  }
 
-  public ModuleResult getResult() {
-    return result_;
-  }
-
-  private ModuleResult result_;
+  private MutationResult projectResult_;
+  private MutationResult moduleResult_;
 }
