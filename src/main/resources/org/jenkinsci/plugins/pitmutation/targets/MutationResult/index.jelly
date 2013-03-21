@@ -50,8 +50,8 @@
               </td>
               <j:if test="${it.sourceLevel}">
               <td>
-                <j:forEach var="mutation" items="${child.mutations}">
-                  ${mutation.mutatorClass}&#160;
+                <j:forEach var="mutator" items="${child.mutators}">
+                  ${mutator}&#160;
                 </j:forEach>
               </td>
               </j:if>

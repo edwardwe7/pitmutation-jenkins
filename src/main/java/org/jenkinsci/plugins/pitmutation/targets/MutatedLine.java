@@ -1,8 +1,11 @@
 package org.jenkinsci.plugins.pitmutation.targets;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Collections2;
 import org.jenkinsci.plugins.pitmutation.Mutation;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -18,8 +21,8 @@ public class MutatedLine extends MutationResult implements Comparable {
     lineNumber_ = Integer.valueOf(line);
   }
 
-  public Collection<Mutation> getMutations() {
-    return mutations_;
+  public Collection<String> getMutators() {
+    return new HashSet<String>(Collections2.transform(mutations_, getMutatorClasses_));
   }
 
   public int getMutationCount() {
@@ -59,6 +62,12 @@ public class MutatedLine extends MutationResult implements Comparable {
     }
     return super.getUrl();
   }
+
+  private static final Function<Mutation, String> getMutatorClasses_ = new Function<Mutation, String>() {
+    public String apply(Mutation mutation) {
+      return mutation.getMutatorClass();
+    }
+  };
 
   private int lineNumber_;
   private Collection<Mutation> mutations_;

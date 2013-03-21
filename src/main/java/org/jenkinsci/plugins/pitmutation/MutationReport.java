@@ -37,6 +37,7 @@ public class MutationReport {
 
   public void addMutation(Mutation mutation) {
     mutationsByClass_.put(mutation.getMutatedClass(), mutation);
+    mutationsByType_.put(mutation.getMutatorClass(), mutation);
     if (mutation.isDetected()) {
       killCount_++;
     }
@@ -60,7 +61,7 @@ public class MutationReport {
   public MutationStats getMutationStats() {
     return new MutationStats() {
       public String getTitle() {
-        return "ALL";
+        return "Report Stats";
       }
 
       public int getUndetected() {
@@ -82,5 +83,6 @@ public class MutationReport {
   private static final Set<Mutation> EMPTY_SET = new HashSet<Mutation>();
 
   private Multimap<String, Mutation> mutationsByClass_;
+  private Multimap<String, Mutation> mutationsByType_;
   private int killCount_ = 0;
 }
