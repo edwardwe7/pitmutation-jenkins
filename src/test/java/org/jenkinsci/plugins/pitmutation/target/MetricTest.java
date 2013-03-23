@@ -1,9 +1,11 @@
 package org.jenkinsci.plugins.pitmutation.target;
 
-import org.jenkinsci.plugins.pitmutation.targets.*;
+import org.jenkinsci.plugins.pitmutation.metrics.IntPercentMetric;
+import org.jenkinsci.plugins.pitmutation.metrics.IntPercentage;
+import org.jenkinsci.plugins.pitmutation.metrics.Metric;
+import org.jenkinsci.plugins.pitmutation.metrics.MutatorMetric;
+import org.jenkinsci.plugins.pitmutation.metrics.MutationMetric;
 import org.junit.Test;
-
-import java.lang.reflect.InvocationTargetException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -46,5 +48,10 @@ public class MetricTest {
     assertThat(killRatio.delta(nextKillRatio).getValue().getPercentage(), is((7f-3f)/(11f-7f) * 100f));
   }
 
+  @Test
+  public void mutatorMetricTest() {
+    MutatorMetric m = new MutatorMetric("NonVoidMethodCall");
+
+  }
 
 }

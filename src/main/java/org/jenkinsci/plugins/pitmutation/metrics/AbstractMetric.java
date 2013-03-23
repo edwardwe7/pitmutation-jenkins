@@ -1,4 +1,4 @@
-package org.jenkinsci.plugins.pitmutation.targets;
+package org.jenkinsci.plugins.pitmutation.metrics;
 
 import com.google.common.reflect.TypeToken;
 
@@ -7,11 +7,9 @@ import com.google.common.reflect.TypeToken;
  */
 public abstract class AbstractMetric<T> implements Metric<T> {
   final private T value_;
-//  final private Class<T> metricTypeClass_;
 
   public AbstractMetric(T value) {
     value_ = value;
-//    metricTypeClass_ = metricTypeClass;
   }
 
   public T getValue() {
@@ -21,8 +19,4 @@ public abstract class AbstractMetric<T> implements Metric<T> {
   public TypeToken<T> getType() {
     return new TypeToken<T>(getClass()) {};
   }
-
-//  public Class<T> getMetricType() {
-//    return metricTypeClass_;
-//  }
 }

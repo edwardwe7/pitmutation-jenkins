@@ -1,4 +1,4 @@
-package org.jenkinsci.plugins.pitmutation.targets;
+package org.jenkinsci.plugins.pitmutation.metrics;
 
 import com.google.common.reflect.TypeToken;
 
