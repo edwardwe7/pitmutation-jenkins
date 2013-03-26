@@ -1,6 +1,5 @@
 package org.jenkinsci.plugins.pitmutation.targets;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import org.jenkinsci.plugins.pitmutation.Mutation;

@@ -2,13 +2,15 @@ package org.jenkinsci.plugins.pitmutation;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
-import com.google.common.collect.*;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
 import org.apache.commons.digester3.Digester;
 import org.jenkinsci.plugins.pitmutation.targets.MutationStats;
 import org.xml.sax.SAXException;
@@ -34,7 +36,9 @@ public class MutationReport {
     digester.addSetProperties("mutations/mutation");
     digester.addSetNestedProperties("mutations/mutation");
 
-    return digester.parse(input);
+    MutationReport report  = digester.parse(input);
+    report.mutationsByPackage_ = Multimaps.index(report.mutationsByClass_.values(), packageIndexFunction);
+    return report;
   }
 
   public void addMutation(Mutation mutation) {
@@ -42,8 +46,6 @@ public class MutationReport {
     if (mutation.isDetected()) {
       killCount_++;
     }
-    mutationsByPackage_ = Multimaps.index(mutationsByClass_.values(), packageIndexFunction);
-    logger_.log(Level.WARNING, "Found " + mutationsByPackage_.keys().size() + " packages.");
   }
 
   //---
@@ -104,8 +106,6 @@ public class MutationReport {
       return (mutation.getMutatedClass());
     }
   };
-
-  static final Logger logger_ = Logger.getLogger(MutationReport.class.getName());
 
   private static final Set<Mutation> EMPTY_SET = new HashSet<Mutation>();
 

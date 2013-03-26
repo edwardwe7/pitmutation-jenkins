@@ -87,6 +87,20 @@ public abstract class MutationResult implements Comparable {
     return urlTransform(getName());
   }
 
+  public String xmlTransform(String name) {
+    return name.replaceAll("\\&", "&amp;").replaceAll("\\<", "&lt;").replaceAll("\\>", "&gt;");
+  }
+
+  public String relativeUrl(MutationResult parent) {
+    StringBuilder url = new StringBuilder("..");
+    MutationResult p = getParent();
+    while (p != null && p != parent) {
+      url.append("/..");
+      p = p.getParent();
+    }
+    return url.toString();
+  }
+
   String urlTransform(String token) {
     StringBuilder buf = new StringBuilder(token.length());
     for (int i = 0; i < token.length(); i++) {
