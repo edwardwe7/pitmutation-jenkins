@@ -72,8 +72,15 @@ public class MutationResultTest {
   }
 
   @Test
-  public void urlTransformName() {
-    assertThat(moduleResult_.getChildMap().get("org.jenkinsci.plugins.pitmutation.PitParser").getUrl(),
+  public void urlTransformPackageName() {
+    assertThat(moduleResult_.getChildMap().get("org.jenkinsci.plugins.pitmutation").getUrl(),
+            is("org_jenkinsci_plugins_pitmutation"));
+  }
+
+  @Test
+  public void urlTransformClassName() {
+    assertThat(moduleResult_.getChildMap().get("org.jenkinsci.plugins.pitmutation")
+            .getChildMap().get("org.jenkinsci.plugins.pitmutation.PitParser").getUrl(),
             is("org_jenkinsci_plugins_pitmutation_PitParser"));
   }
 //  @Test
@@ -106,7 +113,9 @@ public class MutationResultTest {
 
     @Test
     public void findsMutationsOnPitParserClass() {
-      MutationResult pitParser = moduleResult_.getChildMap().get("org.jenkinsci.plugins.pitmutation.PitParser");
+      MutationResult pitPackage = moduleResult_.getChildMap().get("org.jenkinsci.plugins.pitmutation");
+      assertThat(pitPackage.getChildren(), hasSize(5));
+      MutationResult pitParser = pitPackage.getChildMap().get("org.jenkinsci.plugins.pitmutation.PitParser");
       assertThat(pitParser.getChildren(), hasSize(3));
     }
 
@@ -119,10 +128,12 @@ public class MutationResultTest {
 
   @Test
   public void correctSourceLevels() {
-    MutationResult pitParser = moduleResult_.getChildMap().get("org.jenkinsci.plugins.pitmutation.PitParser");
+    MutationResult pitPackage = moduleResult_.getChildMap().get("org.jenkinsci.plugins.pitmutation");
+    MutationResult pitParser = pitPackage.getChildMap().get("org.jenkinsci.plugins.pitmutation.PitParser");
 
     assertThat(projectResult_.isSourceLevel(), is(false));
     assertThat(moduleResult_.isSourceLevel(), is(false));
+    assertThat(pitPackage.isSourceLevel(), is(false));
     assertThat(pitParser.isSourceLevel(), is(true));
   }
 //

@@ -29,8 +29,8 @@ public class ModuleResult extends MutationResult implements Serializable  {
     return report_.getMutationStats();
   }
 
-  public Map<String, MutatedClass> getChildMap() {
-    return Maps.transformEntries(report_.getMutationsByClass().asMap(), classTransformer);
+  public Map<String, MutatedPackage> getChildMap() {
+    return Maps.transformEntries(report_.getMutationsByPackage().asMap(), packageTransformer_);
   }
 
 //  public Collection<MutationStats> getStatsForNewTargets() {
@@ -50,13 +50,14 @@ public class ModuleResult extends MutationResult implements Serializable  {
     return name_;
   }
 
-  private Maps.EntryTransformer<String, Collection<Mutation>, MutatedClass> classTransformer =
-        new Maps.EntryTransformer<String, Collection<Mutation>, MutatedClass>() {
-          public MutatedClass transformEntry(String name, Collection<Mutation> mutations) {
-            logger.log(Level.FINER, "found " + report_.getMutationsForClassName(name).size() + " reports for " + name);
-            return new MutatedClass(name, ModuleResult.this, report_.getMutationsForClassName(name));
-          }
-        };
+  private Maps.EntryTransformer<String, Collection<Mutation>, MutatedPackage> packageTransformer_ =
+          new Maps.EntryTransformer<String, Collection<Mutation>, MutatedPackage>() {
+            public MutatedPackage transformEntry(String name, Collection<Mutation> mutations) {
+              logger.log(Level.FINER, "found " + report_.getMutationsForPackage(name).size() + " reports for " + name);
+              return new MutatedPackage(name, ModuleResult.this, Multimaps.index(report_.getMutationsForPackage(name), MutationReport.classIndexFunction));
+            }
+          };
+
 
   private static final Maps.EntryTransformer<String, Collection<Mutation>, MutationStats> statsTransformer_ =
           new Maps.EntryTransformer<String, Collection<Mutation>, MutationStats>() {

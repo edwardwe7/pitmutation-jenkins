@@ -3,11 +3,13 @@ package org.jenkinsci.plugins.pitmutation;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.*;
 import org.apache.commons.digester3.Digester;
-import org.jenkinsci.plugins.pitmutation.targets.MutatedLine;
 import org.jenkinsci.plugins.pitmutation.targets.MutationStats;
 import org.xml.sax.SAXException;
 
@@ -37,27 +39,32 @@ public class MutationReport {
 
   public void addMutation(Mutation mutation) {
     mutationsByClass_.put(mutation.getMutatedClass(), mutation);
-    mutationsByType_.put(mutation.getMutatorClass(), mutation);
     if (mutation.isDetected()) {
       killCount_++;
     }
+    mutationsByPackage_ = Multimaps.index(mutationsByClass_.values(), packageIndexFunction);
+    logger_.log(Level.WARNING, "Found " + mutationsByPackage_.keys().size() + " packages.");
   }
 
   //---
 
-  public Multimap<String, Mutation> getMutationsByClass() {
-    return mutationsByClass_;
+  public Collection<Mutation> getMutationsForPackage(String packageName) {
+    return mutationsByPackage_.get(packageName);
   }
 
-  public Multimap<String, Mutation> getSurvivors() {
-    return Multimaps.filterValues(mutationsByClass_, isSurvivor_);
+  public Multimap<String, Mutation> getMutationsByPackage() {
+    return mutationsByPackage_;
   }
+
+//  public Multimap<String, Mutation> getSurvivors() {
+//    return Multimaps.filterValues(mutationsByClass_, isSurvivor_);
+//  }
 
   public Collection<Mutation> getMutationsForClassName(String className) {
     Collection<Mutation> mutations = mutationsByClass_.get(className);
     return mutations != null ? mutations : EMPTY_SET;
   }
-
+//
   public MutationStats getMutationStats() {
     return new MutationStats() {
       public String getTitle() {
@@ -74,6 +81,11 @@ public class MutationReport {
     };
   }
 
+  static String packageNameFromClass(String fqcn) {
+    int idx = fqcn.lastIndexOf('.');
+    return fqcn.substring(0, idx != -1 ? idx : 0);
+  }
+
 
   public static Predicate<Mutation> isSurvivor_ = new Predicate<Mutation>() {
     public boolean apply(Mutation mutation) {
@@ -81,9 +93,23 @@ public class MutationReport {
     }
   };
 
+  public static final Function<? super Mutation,String> packageIndexFunction = new Function<Mutation, String>() {
+    public String apply(Mutation mutation) {
+      return packageNameFromClass(mutation.getMutatedClass());
+    }
+  };
+
+  public static final Function<? super Mutation,String> classIndexFunction = new Function<Mutation, String>() {
+    public String apply(Mutation mutation) {
+      return (mutation.getMutatedClass());
+    }
+  };
+
+  static final Logger logger_ = Logger.getLogger(MutationReport.class.getName());
+
   private static final Set<Mutation> EMPTY_SET = new HashSet<Mutation>();
 
+  private Multimap<String, Mutation> mutationsByPackage_;
   private Multimap<String, Mutation> mutationsByClass_;
-  private Multimap<String, Mutation> mutationsByType_;
   private int killCount_ = 0;
 }

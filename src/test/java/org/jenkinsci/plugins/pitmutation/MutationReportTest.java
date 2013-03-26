@@ -6,10 +6,12 @@ import java.io.InputStream;
 import java.util.Collection;
 import java.util.Iterator;
 
+import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
@@ -23,6 +25,12 @@ public class MutationReportTest {
   public void setUp() {
     mutationsXml_ = new InputStream[2];
     mutationsXml_[0] = getClass().getResourceAsStream("mutations-00.xml");
+  }
+
+  @Test
+  public void packageNameFinder() {
+    assertThat(MutationReport.packageNameFromClass("xxx.yyy.zzz.Foo"), is("xxx.yyy.zzz"));
+    assertThat(MutationReport.packageNameFromClass("Foo"), is(""));
   }
 
   @Test
@@ -40,13 +48,21 @@ public class MutationReportTest {
   }
 
   @Test
+  public void indexesMutationsByPackage() throws IOException, SAXException {
+    MutationReport report =  MutationReport.create(mutationsXml_[0]);
+    assertThat(report.getMutationsForPackage("org.jenkinsci.plugins.pitmutation"), hasSize(16));
+    assertThat(report.getMutationsForPackage(""), notNullValue());
+    assertThat(report.getMutationsForPackage(""), hasSize(0));
+  }
+
+  @Test
   public void canDigestAMutation() throws IOException, SAXException {
     MutationReport report = MutationReport.create(new ByteArrayInputStream(MUTATIONS.getBytes()));
 
     assertThat(report.getMutationStats().getTotalMutations(), is(2));
 
     Iterator<Mutation> mutations =
-            report.getMutationsByClass().get("com.mediagraft.podsplice.controllers.massupload.SafeMultipartFile").iterator();
+            report.getMutationsForClassName("com.mediagraft.podsplice.controllers.massupload.SafeMultipartFile").iterator();
 
     Mutation m2 = mutations.next();
     Mutation m1 = mutations.next();
