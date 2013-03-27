@@ -130,11 +130,13 @@ public class MutationResultTest {
   public void correctSourceLevels() {
     MutationResult pitPackage = moduleResult_.getChildMap().get("org.jenkinsci.plugins.pitmutation");
     MutationResult pitParser = pitPackage.getChildMap().get("org.jenkinsci.plugins.pitmutation.PitParser");
+    MutationResult lineResult = pitParser.getChildMap().values().iterator().next();
 
     assertThat(projectResult_.isSourceLevel(), is(false));
     assertThat(moduleResult_.isSourceLevel(), is(false));
     assertThat(pitPackage.isSourceLevel(), is(false));
     assertThat(pitParser.isSourceLevel(), is(true));
+    assertThat(lineResult.isSourceLevel(), is(false));
   }
 //
 //  @Test

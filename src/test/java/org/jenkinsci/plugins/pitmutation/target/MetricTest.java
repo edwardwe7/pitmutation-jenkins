@@ -50,8 +50,8 @@ public class MetricTest {
 
   @Test
   public void mutatorMetricTest() {
-    MutatorMetric m = new MutatorMetric("NonVoidMethodCall");
-
+    MutatorMetric mutatorMetric = new MutatorMetric("NonVoidMethodCall");
+    assertThat(mutatorMetric.createMetric(10).aggregate(mutatorMetric.createMetric(5)).getValue(), is(15));
   }
 
 }
