@@ -1,8 +1,7 @@
-package org.jenkinsci.plugins.pitmutation.target;
+package org.jenkinsci.plugins.pitmutation.targets;
 
 import org.jenkinsci.plugins.pitmutation.MutationReport;
 import org.jenkinsci.plugins.pitmutation.PitBuildAction;
-import org.jenkinsci.plugins.pitmutation.targets.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.xml.sax.SAXException;
@@ -137,6 +136,16 @@ public class MutationResultTest {
     assertThat(pitPackage.isSourceLevel(), is(false));
     assertThat(pitParser.isSourceLevel(), is(true));
     assertThat(lineResult.isSourceLevel(), is(false));
+  }
+
+  @Test
+  public void testXmlTransform() {
+    assertThat(MutationResult.xmlTransform("replace&and<and>"), is("replace&amp;and&lt;and&gt;"));
+  }
+
+  @Test
+  public void testUrlTransform() {
+    assertThat(MutationResult.urlTransform("^*!replace::non+'alphas@}"), is("___replace__non__alphas__"));
   }
 //
 //  @Test

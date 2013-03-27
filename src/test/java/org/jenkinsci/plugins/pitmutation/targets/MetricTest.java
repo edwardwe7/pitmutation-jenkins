@@ -1,4 +1,4 @@
-package org.jenkinsci.plugins.pitmutation.target;
+package org.jenkinsci.plugins.pitmutation.targets;
 
 import org.jenkinsci.plugins.pitmutation.metrics.IntPercentMetric;
 import org.jenkinsci.plugins.pitmutation.metrics.IntPercentage;
