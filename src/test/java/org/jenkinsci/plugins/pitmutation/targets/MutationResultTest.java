@@ -145,7 +145,7 @@ public class MutationResultTest {
 
   @Test
   public void testUrlTransform() {
-    assertThat(MutationResult.urlTransform("^*!replace::non+'alphas@}"), is("___replace__non__alphas__"));
+    assertThat(MutationResult.urlTransform("^*!replace::non+'alphas@}129"), is("___replace__non__alphas__129"));
   }
 //
 //  @Test
