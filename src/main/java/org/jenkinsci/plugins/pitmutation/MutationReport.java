@@ -41,6 +41,11 @@ public class MutationReport {
     return report;
   }
 
+  /**
+   * Called by digester.
+   *
+   * @param mutation
+   */
   public void addMutation(Mutation mutation) {
     mutationsByClass_.put(mutation.getMutatedClass(), mutation);
     if (mutation.isDetected()) {

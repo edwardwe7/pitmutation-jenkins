@@ -11,7 +11,8 @@ public class Mutation {
            && m.getMutatedMethod().equals(getMutatedMethod())
            && m.getLineNumber() == getLineNumber()
            && m.getMutator().equals(getMutator())
-           && m.getStatus().equals(getStatus());
+           && m.getStatus().equals(getStatus())
+           && m.getIndex() == getIndex();
   }
 
   @Override
