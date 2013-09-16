@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mutations>
-<mutation detected='false' status='NO_COVERAGE'><sourceFile>PitParser.java</sourceFile><mutatedClass>org.jenkinsci.plugins.pitmutation.PitParser</mutatedClass><mutatedMethod>&#60;init&#62;</mutatedMethod><lineNumber>28</lineNumber><mutator>org.pitest.mutationtest.engine.gregor.mutators.NonVoidMethodCallMutator</mutator><index>10</index><killingTest/></mutation>
+<mutation detected='false' status='NO_COVERAGE'>
+    <sourceFile>PitParser.java</sourceFile>
+    <mutatedClass>org.jenkinsci.plugins.pitmutation.PitParser</mutatedClass>
+    <mutatedMethod>&#60;init&#62;</mutatedMethod>
+    <lineNumber>28</lineNumber>
+    <mutator>org.pitest.mutationtest.engine.gregor.mutators.NonVoidMethodCallMutator</mutator>
+    <index>10</index>
+    <killingTest/>
+</mutation>
 <mutation detected='false' status='NO_COVERAGE'><sourceFile>PitParser.java</sourceFile><mutatedClass>org.jenkinsci.plugins.pitmutation.PitParser</mutatedClass><mutatedMethod>&#60;init&#62;</mutatedMethod><lineNumber>23</lineNumber><mutator>org.pitest.mutationtest.engine.gregor.mutators.NonVoidMethodCallMutator</mutator><index>2</index><killingTest/></mutation>
 <mutation detected='false' status='NO_COVERAGE'><sourceFile>PitParser.java</sourceFile><mutatedClass>org.jenkinsci.plugins.pitmutation.PitParser</mutatedClass><mutatedMethod>&#60;init&#62;</mutatedMethod><lineNumber>26</lineNumber><mutator>org.pitest.mutationtest.engine.gregor.mutators.NonVoidMethodCallMutator</mutator><index>7</index><killingTest/></mutation>
 

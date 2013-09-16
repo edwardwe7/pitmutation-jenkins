@@ -22,7 +22,7 @@ public class Mutation {
 
   @Override
   public int hashCode() {
-    return getMutatedClass().hashCode() ^ getMutatedClass().hashCode();
+    return getMutatedClass() == null ? 1 : getMutatedClass().hashCode() ^ getMutatedClass().hashCode();
   }
 
   public boolean isDetected() {
@@ -103,6 +103,13 @@ public class Mutation {
 
   public void setKillingTest(final String killedTest) {
     killedTest_ = killedTest;
+  }
+
+  public boolean isValid() {
+    return getMutatedClass() != null
+            && getMutatedMethod() != null
+            && getMutator() != null
+            && getStatus() != null;
   }
 
   public String toString() {
