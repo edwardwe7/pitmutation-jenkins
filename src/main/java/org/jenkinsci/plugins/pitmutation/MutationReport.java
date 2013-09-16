@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -19,6 +20,8 @@ import org.xml.sax.SAXException;
  * @author edward
  */
 public class MutationReport {
+
+  private static final Logger logger = Logger.getLogger(MutationReport.class.getName());
 
   public MutationReport() {
     mutationsByClass_ = HashMultimap.create();
@@ -41,6 +44,11 @@ public class MutationReport {
     return report;
   }
 
+  /**
+   * Called by digester.
+   *
+   * @param mutation
+   */
   public void addMutation(Mutation mutation) {
     mutationsByClass_.put(mutation.getMutatedClass(), mutation);
     if (mutation.isDetected()) {

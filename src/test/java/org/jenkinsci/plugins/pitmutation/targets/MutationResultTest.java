@@ -25,8 +25,8 @@ public class MutationResultTest {
   @Before
   public void setUp() throws IOException, SAXException {
     InputStream[] mutationsXml_ = new InputStream[2];
-    mutationsXml_[0] = MutationReport.class.getResourceAsStream("mutations-00.xml");
-    mutationsXml_[1] = MutationReport.class.getResourceAsStream("mutations-01.xml");
+    mutationsXml_[0] = MutationReport.class.getResourceAsStream("testmutations-00.xml");
+    mutationsXml_[1] = MutationReport.class.getResourceAsStream("testmutations-01.xml");
     MutationReport reportOld = MutationReport.create(mutationsXml_[0]);
     MutationReport reportNew = MutationReport.create(mutationsXml_[1]);
     Map<String, MutationReport> reportsNew = new HashMap<String, MutationReport>();

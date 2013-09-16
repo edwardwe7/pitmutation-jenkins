@@ -24,7 +24,7 @@ public class MutationReportTest {
   @Before
   public void setUp() {
     mutationsXml_ = new InputStream[2];
-    mutationsXml_[0] = getClass().getResourceAsStream("mutations-00.xml");
+    mutationsXml_[0] = getClass().getResourceAsStream("testmutations-00.xml");
   }
 
   @Test
