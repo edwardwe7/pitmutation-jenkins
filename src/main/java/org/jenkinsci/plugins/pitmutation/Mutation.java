@@ -105,13 +105,6 @@ public class Mutation {
     killedTest_ = killedTest;
   }
 
-  public boolean isValid() {
-    return getMutatedClass() != null
-            && getMutatedMethod() != null
-            && getMutator() != null
-            && getStatus() != null;
-  }
-
   public String toString() {
     return file_ + ":" + lineNumber_ + " : " + status_ + " type:[" + mutator_ +"]";
   }

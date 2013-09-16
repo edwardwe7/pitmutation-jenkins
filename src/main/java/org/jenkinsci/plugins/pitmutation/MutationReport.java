@@ -50,15 +50,9 @@ public class MutationReport {
    * @param mutation
    */
   public void addMutation(Mutation mutation) {
-    if (mutation.isValid()) {
-      mutationsByClass_.put(mutation.getMutatedClass(), mutation);
-      if (mutation.isDetected()) {
-        killCount_++;
-      }
-    }
-    else {
-      //TODO log invalid mutation
-      System.err.println("Invalid mutation:" + mutation.toString());
+    mutationsByClass_.put(mutation.getMutatedClass(), mutation);
+    if (mutation.isDetected()) {
+      killCount_++;
     }
   }
 
