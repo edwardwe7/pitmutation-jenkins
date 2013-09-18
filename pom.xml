@@ -7,7 +7,7 @@
   </parent>
 
   <artifactId>pitmutation</artifactId>
-  <version>1.0-5-SNAPSHOT</version>
+  <version>1.0-5</version>
   <name>Jenkins PIT Mutation Plugin</name>
   <packaging>hpi</packaging>
   <url>http://wiki.jenkins-ci.org/display/JENKINS/pitmutation</url>
@@ -111,7 +111,7 @@
                     <exclude>org.jenkinsci.plugins.pitmutation.Messages</exclude>
                 </excludes>
             </instrumentation>
-            <check/>
+            <check />
         </configuration>
       </plugin>
       <plugin>
