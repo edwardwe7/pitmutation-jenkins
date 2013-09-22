@@ -1,0 +1,15 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout"
+         xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+    <l:layout xmlns:pitmuation="/hudson/plugins/pitmutation/tags" css="/plugin/pitmutation/css/style.css">
+        <st:include it="${it.project}" page="sidepanel.jelly"/>
+        <l:main-panel>
+            <h1>No valid pitmutation data available</h1>
+            <p>
+                ${%description.1}
+            </p>
+            <p>
+                ${%description.2}
+            </p>
+        </l:main-panel>
+    </l:layout>
+</j:jelly>
