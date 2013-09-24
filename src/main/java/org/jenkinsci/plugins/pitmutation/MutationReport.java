@@ -43,7 +43,7 @@ public class MutationReport {
       killCount_++;
     }
     mutationsByPackage_ = Multimaps.index(mutationsByClass_.values(), packageIndexFunction);
-    logger_.log(Level.WARNING, "Found " + mutationsByPackage_.keys().size() + " packages.");
+//    logger_.log(Level.WARNING, "Found " + mutationsByPackage_.keys().size() + " packages.");
   }
 
   //---

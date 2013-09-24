@@ -13,7 +13,7 @@ import java.util.Map;
 /**
  * @author Ed Kimber
  */
-public class ProjectMutations extends MutationResult {
+public class ProjectMutations extends MutationResult<ProjectMutations> {
   public ProjectMutations(PitBuildAction action) {
     super("aggregate", null);
     action_ = action;
@@ -24,7 +24,7 @@ public class ProjectMutations extends MutationResult {
     return action_.getOwner();
   }
 
-  public MutationResult getPreviousResult() {
+  public ProjectMutations getPreviousResult() {
     return action_.getPreviousAction().getReport();
   }
 
@@ -50,7 +50,7 @@ public class ProjectMutations extends MutationResult {
     return "Modules";
   }
 
-  public Map<String, ? extends MutationResult> getChildMap() {
+  public Map<String, ? extends MutationResult<?>> getChildMap() {
     return Maps.transformEntries(action_.getReports(), moduleTransformer_);
   }
 
@@ -60,6 +60,10 @@ public class ProjectMutations extends MutationResult {
       return new ModuleResult(moduleName, ProjectMutations.this, report);
     }
   };
+
+  public int compareTo(ProjectMutations other) {
+    return this.getMutationStats().getUndetected() - other.getMutationStats().getUndetected();
+  }
 
   private PitBuildAction action_;
 }

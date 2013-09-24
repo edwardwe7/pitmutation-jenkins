@@ -8,16 +8,13 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import hudson.util.TextFile;
 
 /**
  * @author Ed Kimber
  */
-public class MutatedClass extends MutationResult {
+public class MutatedClass extends MutationResult<MutatedClass> {
 
   public MutatedClass(String name, MutationResult parent, Collection<Mutation> mutations) {
     super(name, parent);
@@ -66,7 +63,7 @@ public class MutatedClass extends MutationResult {
     return new MutationStatsImpl(getName(), mutations_);
   }
 
-  public Map<String, MutatedLine> getChildMap() {
+  public Map<String, ? extends MutationResult<?>> getChildMap() {
     return mutatedLines_;
   }
 
@@ -87,6 +84,10 @@ public class MutatedClass extends MutationResult {
 
   public String getPackage() {
     return package_;
+  }
+
+  public int compareTo(MutatedClass other) {
+    return this.getMutationStats().getUndetected() - other.getMutationStats().getUndetected();
   }
 
   private String name_;
