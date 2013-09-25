@@ -17,17 +17,9 @@ public class MetricTest {
 
   @Test
   public void testIntMetric() {
-    assertThat(MutationMetric.UNDETECTED.createMetric(7).getValue(), is(7));
-
-    assertThat(MutationMetric.UNDETECTED.createMetric(4)
-            .aggregate(
-                    MutationMetric.UNDETECTED.createMetric(7))
-            .getValue(), is(11));
-
-    assertThat(MutationMetric.UNDETECTED.createMetric(4)
-            .delta(
-                    MutationMetric.UNDETECTED.createMetric(7))
-            .getValue(), is(-3));
+    assertThat(undetected(7).getValue(), is(7));
+    assertThat(undetected(4).aggregate(undetected(7)).getValue(), is(11));
+    assertThat(undetected(4).delta(undetected(7)).getValue(), is(-3));
   }
 
   @Test
@@ -55,6 +47,12 @@ public class MetricTest {
   public void mutatorMetricKnowsItsName() {
     MutatorMetric m = new MutatorMetric("NonVoidMethodCall");
     assertThat(m.getName(), is("NonVoidMethodCall"));
+  }
+
+  @Test
+  public void metricKnowsItsType() {
+    Metric metric = undetected(3);
+    System.out.println(metric.getType());
   }
 
   private IntPercentMetric killRatio(Metric<Integer> numerator, Metric<Integer> denominator) {
