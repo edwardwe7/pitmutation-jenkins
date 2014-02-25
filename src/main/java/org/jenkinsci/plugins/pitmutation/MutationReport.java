@@ -56,10 +56,6 @@ public class MutationReport {
     return mutationsByPackage_;
   }
 
-//  public Multimap<String, Mutation> getSurvivors() {
-//    return Multimaps.filterValues(mutationsByClass_, isSurvivor_);
-//  }
-
   public Collection<Mutation> getMutationsForClassName(String className) {
     Collection<Mutation> mutations = mutationsByClass_.get(className);
     return mutations != null ? mutations : EMPTY_SET;
