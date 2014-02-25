@@ -1,15 +1,14 @@
-package org.jenkinsci.plugins.pitmutation.targets;
+package org.jenkinsci.plugins.pitmutation.metrics;
 
 /**
  * @author Ed Kimber
  */
-public class IntPercentMetric extends PercentMetric<Integer> {
+public class IntPercentMetric extends AbstractMetric<IntPercentage> {
   public IntPercentMetric(IntPercentage value) {
     super(value);
   }
 
-  @Override
-  public Metric<Percentage<Integer>> aggregate(Metric<Percentage<Integer>> metric) {
+  public Metric<IntPercentage> aggregate(Metric<IntPercentage> metric) {
     Percentage<Integer> first = IntPercentMetric.this.getValue();
     Percentage<Integer> second = metric.getValue();
     return new IntPercentMetric(new IntPercentage(
@@ -17,8 +16,7 @@ public class IntPercentMetric extends PercentMetric<Integer> {
             first.getDenominator().aggregate(second.getDenominator())));
   }
 
-  @Override
-  public Metric<Percentage<Integer>> delta(Metric<Percentage<Integer>> metric) {
+  public Metric<IntPercentage> delta(Metric<IntPercentage> metric) {
     Percentage<Integer> first = IntPercentMetric.this.getValue();
     Percentage<Integer> second = metric.getValue();
     return new IntPercentMetric(new IntPercentage(

@@ -1,9 +1,11 @@
 package org.jenkinsci.plugins.pitmutation.target;
 
-import org.jenkinsci.plugins.pitmutation.targets.*;
+import org.jenkinsci.plugins.pitmutation.metrics.IntPercentMetric;
+import org.jenkinsci.plugins.pitmutation.metrics.IntPercentage;
+import org.jenkinsci.plugins.pitmutation.metrics.Metric;
+import org.jenkinsci.plugins.pitmutation.metrics.MutatorMetric;
+import org.jenkinsci.plugins.pitmutation.metrics.MutationMetric;
 import org.junit.Test;
-
-import java.lang.reflect.InvocationTargetException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -29,22 +31,41 @@ public class MetricTest {
   }
 
   @Test
-  public void ratioMetricTest() {
-    Metric<Integer> undetected = MutationMetric.UNDETECTED.createMetric(3);
-    Metric<Integer> total = MutationMetric.TOTAL_MUTATIONS.createMetric(7);
-
-    IntPercentMetric killRatio = MutationMetric.KILL_RATIO.createMetric(new IntPercentage(undetected, total));
-
-    assertThat(killRatio.getValue().getPercentage(), is(3f/7f * 100f));
-
-    IntPercentMetric nextKillRatio = MutationMetric.KILL_RATIO.createMetric(new IntPercentage(
-            MutationMetric.UNDETECTED.createMetric(7),
-            MutationMetric.TOTAL_MUTATIONS.createMetric(11)
-            ));
-
-    assertThat(killRatio.aggregate(nextKillRatio).getValue().getPercentage(), is(10f/18f * 100f));
-    assertThat(killRatio.delta(nextKillRatio).getValue().getPercentage(), is((7f-3f)/(11f-7f) * 100f));
+  public void metricCalculatesKillRatioPercentage() {
+    assertThat(killRatio(undetected(3), totalMutations(7))
+            .getValue().getPercentage(),
+            is(3f/7f * 100f));
   }
 
+  @Test
+  public void killRatioMetricCanAggregateMetrics() {
+    Metric<IntPercentage> aggregate = killRatio(undetected(3), totalMutations(7))
+            .aggregate(killRatio(undetected(7), totalMutations(11)));
+    assertThat(aggregate.getValue().getPercentage(), is(10f/18f * 100f));
+  }
 
+  @Test
+  public void killRatioMetricCanCalculateDeltas() {
+    Metric<IntPercentage> delta = killRatio(undetected(3), totalMutations(7))
+            .delta(killRatio(undetected(7), totalMutations(11)));
+    assertThat(delta.getValue().getPercentage(), is((7f-3f)/(11f-7f) * 100f));
+  }
+
+  @Test
+  public void mutatorMetricKnowsItsName() {
+    MutatorMetric m = new MutatorMetric("NonVoidMethodCall");
+    assertThat(m.getName(), is("NonVoidMethodCall"));
+  }
+
+  private IntPercentMetric killRatio(Metric<Integer> numerator, Metric<Integer> denominator) {
+    return MutationMetric.KILL_RATIO.createMetric(new IntPercentage(numerator, denominator));
+  }
+
+  private Metric<Integer> undetected(int undetected) {
+    return MutationMetric.UNDETECTED.createMetric(undetected);
+  }
+
+  private Metric<Integer> totalMutations(int totalMutations) {
+    return MutationMetric.TOTAL_MUTATIONS.createMetric(totalMutations);
+  }
 }

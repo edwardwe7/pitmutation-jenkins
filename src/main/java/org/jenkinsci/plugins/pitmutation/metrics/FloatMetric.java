@@ -1,4 +1,4 @@
-package org.jenkinsci.plugins.pitmutation.targets;
+package org.jenkinsci.plugins.pitmutation.metrics;
 
 /**
  * @author Ed Kimber
