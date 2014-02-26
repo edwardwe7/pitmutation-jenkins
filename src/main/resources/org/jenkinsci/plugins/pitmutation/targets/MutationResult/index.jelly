@@ -30,9 +30,9 @@
             </table>
 
             <h2>Components</h2>
-            <table>
+            <table border="1px" class="pane sortable">
             <tr>
-            <th>Name</th><th>Mutations</th><th>Undetected</th><th>Coverage</th>
+            <th>Name</th><th>Mutations</th><th>+&#x2F;-</th><th>Undetected</th><th>+&#x2F;-</th><th>Coverage</th><th>+&#x2F;-</th>
             <j:if test="${it.sourceLevel}"><th>Mutations</th></j:if>
             </tr>
             <j:forEach var="child" items="${it.children}">
@@ -42,15 +42,21 @@
               </td>
               <td>
                 ${child.mutationStats.totalMutations}
-                (<j:if test="${child.statsDelta.totalMutations &gt; 0}">+</j:if>${child.statsDelta.totalMutations})
+              </td>
+              <td>
+                <j:if test="${child.statsDelta.totalMutations &gt; 0}">+</j:if>${child.statsDelta.totalMutations}
               </td>
               <td>
                 ${child.mutationStats.undetected}
-                (<j:if test="${child.statsDelta.undetected &gt; 0}">+</j:if>${child.statsDelta.undetected})
+              </td>
+              <td>
+                <j:if test="${child.statsDelta.undetected &gt; 0}">+</j:if>${child.statsDelta.undetected}
               </td>
               <td>
                 ${child.mutationStats.killPercent}&#37;
-                (<j:if test="${child.statsDelta.killPercent &gt; 0}">+</j:if>${child.statsDelta.killPercent}&#37;)
+              </td>
+              <td>
+                <j:if test="${child.statsDelta.killPercent &gt; 0}">+</j:if>${child.statsDelta.killPercent}&#37;
               </td>
               <j:if test="${it.sourceLevel}">
               <td>
