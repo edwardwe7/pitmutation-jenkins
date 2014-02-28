@@ -30,7 +30,7 @@ public class MutatedLineTest {
 
     MutatedLine line = new MutatedLine("0", null, Arrays.asList(mutations));
 
-    assertThat(line.getMutationCount(), is(3));
+    assertThat(line.getMutationStats().getTotalMutations(), is(3));
     assertThat(line.getMutators(), hasSize(2));
   }
 

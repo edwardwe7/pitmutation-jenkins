@@ -1,15 +1,10 @@
 package org.jenkinsci.plugins.pitmutation.targets;
 
-import com.google.common.collect.HashMultimap;
 import com.google.common.collect.HashMultiset;
-import com.google.common.collect.Multimap;
 import com.google.common.collect.Multiset;
 import org.jenkinsci.plugins.pitmutation.Mutation;
 
-import javax.swing.plaf.multi.MultiScrollBarUI;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author  Ed Kimber

@@ -12,7 +12,7 @@ import java.util.logging.Logger;
 /**
  * @author Ed Kimber
  */
-public abstract class MutationResult implements Comparable {
+public abstract class MutationResult<T extends MutationResult> implements Comparable<T> {
 
   public MutationResult(String name, MutationResult parent) {
     parent_ = parent;
@@ -28,12 +28,23 @@ public abstract class MutationResult implements Comparable {
     return parent_;
   }
 
+  public List<MutationResult> getParents() {
+    List<MutationResult> result = new ArrayList<MutationResult>();
+    MutationResult p = getParent();
+    while (p != null) {
+      result.add(p);
+      p = p.getParent();
+    }
+    Collections.reverse(result);
+    return result;
+  }
+
   public MutationResult getPreviousResult() {
     if (parent_ == null) {
       return null;
     }
     else {
-      MutationResult previous = parent_.getPreviousResult();
+      MutationResult<?> previous = parent_.getPreviousResult();
       return previous == null ? null : previous.getChildMap().get(name_);
     }
   }
@@ -42,7 +53,11 @@ public abstract class MutationResult implements Comparable {
 
   public abstract MutationStats getMutationStats();
 
-  public abstract Map<String, ? extends MutationResult> getChildMap();
+  public abstract Map<String, ? extends MutationResult<?>> getChildMap();
+
+  public MutationResult<?> getChildResult(String name) {
+    return getChildMap().get(name);
+  }
 
   public boolean isSourceLevel() {
     return false;
@@ -58,10 +73,6 @@ public abstract class MutationResult implements Comparable {
 
   public Collection<? extends MutationResult> getChildren() {
     return Ordering.natural().reverse().sortedCopy(getChildMap().values());
-  }
-
-  public int compareTo(Object o) {
-    return getMutationStats().getUndetected() - ((MutationResult) o).getMutationStats().getUndetected();
   }
 
   public MutationStats getStatsDelta() {
@@ -86,24 +97,15 @@ public abstract class MutationResult implements Comparable {
     return urlTransform(getName());
   }
 
-  public List<MutationResult> getParents() {
-    List<MutationResult> result = new ArrayList<MutationResult>();
-    MutationResult p = getParent();
-    while (p != null) {
-      result.add(p);
-      p = p.getParent();
-    }
-    Collections.reverse(result);
-    return result;
-  }
-
   public static String xmlTransform(String name) {
     return name.replaceAll("\\&", "&amp;").replaceAll("\\<", "&lt;").replaceAll("\\>", "&gt;");
   }
 
   public String relativeUrl(MutationResult parent) {
     StringBuilder url = new StringBuilder("..");
-    MutationResult p = this.getParent();
+
+    MutationResult p = getParent();
+
     while (p != null && p != parent) {
       url.append("/..");
       p = p.getParent();

@@ -54,9 +54,8 @@ public class MutationReport {
     if (mutation.isDetected()) {
       killCount_++;
     }
+    mutationsByPackage_ = Multimaps.index(mutationsByClass_.values(), packageIndexFunction);
   }
-
-  //---
 
   public Collection<Mutation> getMutationsForPackage(String packageName) {
     return mutationsByPackage_.get(packageName);
@@ -65,10 +64,6 @@ public class MutationReport {
   public Multimap<String, Mutation> getMutationsByPackage() {
     return mutationsByPackage_;
   }
-
-//  public Multimap<String, Mutation> getSurvivors() {
-//    return Multimaps.filterValues(mutationsByClass_, isSurvivor_);
-//  }
 
   public Collection<Mutation> getMutationsForClassName(String className) {
     Collection<Mutation> mutations = mutationsByClass_.get(className);
@@ -95,7 +90,6 @@ public class MutationReport {
     int idx = fqcn.lastIndexOf('.');
     return fqcn.substring(0, idx != -1 ? idx : 0);
   }
-
 
   public static Predicate<Mutation> isSurvivor_ = new Predicate<Mutation>() {
     public boolean apply(Mutation mutation) {
