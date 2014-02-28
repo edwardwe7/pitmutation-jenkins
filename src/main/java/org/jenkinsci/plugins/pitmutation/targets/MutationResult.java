@@ -2,7 +2,6 @@ package org.jenkinsci.plugins.pitmutation.targets;
 
 import com.google.common.collect.Ordering;
 import hudson.model.AbstractBuild;
-import org.jenkinsci.plugins.pitmutation.Mutation;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
@@ -98,13 +97,15 @@ public abstract class MutationResult<T extends MutationResult> implements Compar
     return urlTransform(getName());
   }
 
-  public String xmlTransform(String name) {
+  public static String xmlTransform(String name) {
     return name.replaceAll("\\&", "&amp;").replaceAll("\\<", "&lt;").replaceAll("\\>", "&gt;");
   }
 
   public String relativeUrl(MutationResult parent) {
     StringBuilder url = new StringBuilder("..");
+
     MutationResult p = getParent();
+
     while (p != null && p != parent) {
       url.append("/..");
       p = p.getParent();
@@ -112,7 +113,7 @@ public abstract class MutationResult<T extends MutationResult> implements Compar
     return url.toString();
   }
 
-  String urlTransform(String token) {
+  static String urlTransform(String token) {
     StringBuilder buf = new StringBuilder(token.length());
     for (int i = 0; i < token.length(); i++) {
       final char c = token.charAt(i);

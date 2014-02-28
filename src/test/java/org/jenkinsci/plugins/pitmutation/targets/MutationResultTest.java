@@ -1,8 +1,7 @@
-package org.jenkinsci.plugins.pitmutation.target;
+package org.jenkinsci.plugins.pitmutation.targets;
 
 import org.jenkinsci.plugins.pitmutation.MutationReport;
 import org.jenkinsci.plugins.pitmutation.PitBuildAction;
-import org.jenkinsci.plugins.pitmutation.targets.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.xml.sax.SAXException;
@@ -26,8 +25,8 @@ public class MutationResultTest {
   @Before
   public void setUp() throws IOException, SAXException {
     InputStream[] mutationsXml_ = new InputStream[2];
-    mutationsXml_[0] = MutationReport.class.getResourceAsStream("mutations-00.xml");
-    mutationsXml_[1] = MutationReport.class.getResourceAsStream("mutations-01.xml");
+    mutationsXml_[0] = MutationReport.class.getResourceAsStream("testmutations-00.xml");
+    mutationsXml_[1] = MutationReport.class.getResourceAsStream("testmutations-01.xml");
     MutationReport reportOld = MutationReport.create(mutationsXml_[0]);
     MutationReport reportNew = MutationReport.create(mutationsXml_[1]);
     Map<String, MutationReport> reportsNew = new HashMap<String, MutationReport>();
@@ -173,11 +172,23 @@ public class MutationResultTest {
   public void correctSourceLevels() {
     MutationResult<?> pitPackage = moduleResult_.getChildMap().get("org.jenkinsci.plugins.pitmutation");
     MutationResult<?> pitParser = pitPackage.getChildMap().get("org.jenkinsci.plugins.pitmutation.PitParser");
+    MutationResult<?> lineResult = pitParser.getChildMap().values().iterator().next();
 
     assertThat(projectResult_.isSourceLevel(), is(false));
     assertThat(moduleResult_.isSourceLevel(), is(false));
     assertThat(pitPackage.isSourceLevel(), is(false));
     assertThat(pitParser.isSourceLevel(), is(true));
+    assertThat(lineResult.isSourceLevel(), is(false));
+  }
+
+  @Test
+  public void testXmlTransform() {
+    assertThat(MutationResult.xmlTransform("replace&and<and>"), is("replace&amp;and&lt;and&gt;"));
+  }
+
+  @Test
+  public void testUrlTransform() {
+    assertThat(MutationResult.urlTransform("^*!replace::non+'alphas@}129"), is("___replace__non__alphas__129"));
   }
 //
 //  @Test

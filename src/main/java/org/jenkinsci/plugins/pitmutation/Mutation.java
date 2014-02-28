@@ -11,7 +11,8 @@ public class Mutation {
            && m.getMutatedMethod().equals(getMutatedMethod())
            && m.getLineNumber() == getLineNumber()
            && m.getMutator().equals(getMutator())
-           && m.getStatus().equals(getStatus());
+           && m.getStatus().equals(getStatus())
+           && m.getIndex() == getIndex();
   }
 
   @Override
@@ -21,7 +22,7 @@ public class Mutation {
 
   @Override
   public int hashCode() {
-    return getMutatedClass().hashCode() ^ getMutatedClass().hashCode();
+    return getMutatedClass() == null ? 1 : getMutatedClass().hashCode() ^ getMutatedClass().hashCode();
   }
 
   public boolean isDetected() {
