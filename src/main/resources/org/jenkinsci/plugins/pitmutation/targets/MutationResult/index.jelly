@@ -52,7 +52,7 @@
               <td>
                 <j:if test="${child.statsDelta.undetected &gt; 0}">+</j:if>${child.statsDelta.undetected}
               </td>
-              <td>
+              <td data="${child.mutationStats.killPercent}">
                 ${child.mutationStats.killPercent}&#37;
               </td>
               <td>

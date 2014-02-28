@@ -7,8 +7,7 @@ import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Logger;
 
 /**
@@ -28,6 +27,17 @@ public abstract class MutationResult<T extends MutationResult> implements Compar
 
   public MutationResult getParent() {
     return parent_;
+  }
+
+  public List<MutationResult> getParents() {
+    List<MutationResult> result = new ArrayList<MutationResult>();
+    MutationResult p = getParent();
+    while (p != null) {
+      result.add(p);
+      p = p.getParent();
+    }
+    Collections.reverse(result);
+    return result;
   }
 
   public MutationResult getPreviousResult() {
