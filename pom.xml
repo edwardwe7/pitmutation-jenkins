@@ -13,8 +13,8 @@
   <url>http://wiki.jenkins-ci.org/display/JENKINS/pitmutation</url>
 
   <scm>
-    <connection>scm:git:ssh://git@github.com:ekimber/jenkinsci/pitmutation-plugin.git</connection>
-    <developerConnection>scm:git:ssh://git@github.com:ekimber/jenkinsci/pitmutation-plugin.git</developerConnection>
+    <connection>scm:git:ssh://git@github.com/jenkinsci/pitmutation-plugin.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/jenkinsci/pitmutation-plugin.git</developerConnection>
     <url>https://github.com/jenkinsci/pitmutation-plugin</url>
   </scm>
 
