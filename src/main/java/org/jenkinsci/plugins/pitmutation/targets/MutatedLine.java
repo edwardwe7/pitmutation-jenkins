@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 /**
  * @author edward
  */
-public class MutatedLine extends MutationResult implements Comparable {
+public class MutatedLine extends MutationResult<MutatedLine> {
 
   public MutatedLine(String line, MutationResult parent, Collection<Mutation> mutations) {
     super(line, parent);
@@ -24,13 +24,13 @@ public class MutatedLine extends MutationResult implements Comparable {
   public Collection<String> getMutators() {
     return new HashSet<String>(Collections2.transform(mutations_, getMutatorClasses_));
   }
+//
+//  public int getMutationCount() {
+//    return mutations_.size();
+//  }
 
-  public int getMutationCount() {
-    return mutations_.size();
-  }
-
-  public int compareTo(Object o) {
-    return ((MutatedLine) o).lineNumber_ - lineNumber_;
+  public int compareTo(MutatedLine other) {
+    return other.lineNumber_ - lineNumber_;
   }
 
   @Override
@@ -49,8 +49,8 @@ public class MutatedLine extends MutationResult implements Comparable {
   }
 
   @Override
-  public Map<String, MutationResult> getChildMap() {
-    return new HashMap<String, MutationResult>();
+  public Map<String, MutationResult<?>> getChildMap() {
+    return new HashMap<String, MutationResult<?>>();
   }
 
   public String getUrl() {

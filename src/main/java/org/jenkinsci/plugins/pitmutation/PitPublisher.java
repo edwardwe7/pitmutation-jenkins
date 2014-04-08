@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import hudson.Util;
+import hudson.model.*;
 import hudson.remoting.VirtualChannel;
 import org.jenkinsci.plugins.pitmutation.targets.MutationStats;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -14,10 +15,6 @@ import org.kohsuke.stapler.StaplerRequest;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
-import hudson.model.AbstractBuild;
-import hudson.model.AbstractProject;
-import hudson.model.BuildListener;
-import hudson.model.Result;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
@@ -67,6 +64,14 @@ public class PitPublisher extends Recorder {
       build.setResult(decideBuildResult(action));
     }
     return true;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public Action getProjectAction(AbstractProject<?, ?> project) {
+    return new PitProjectAction(project);
   }
 
   void publishReports(FilePath[] reports, FilePath buildTarget) {

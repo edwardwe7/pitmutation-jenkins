@@ -11,7 +11,7 @@ import java.util.logging.Level;
 /**
  * @author Ed Kimber
  */
-public class MutatedPackage extends MutationResult {
+public class MutatedPackage extends MutationResult<MutatedPackage> {
 
   public MutatedPackage(String name, MutationResult parent, Multimap<String, Mutation> classMutations) {
     super(name, parent);
@@ -29,7 +29,7 @@ public class MutatedPackage extends MutationResult {
   }
 
   @Override
-  public Map<String, ? extends MutationResult> getChildMap() {
+  public Map<String, ? extends MutationResult<?>> getChildMap() {
     return Maps.transformEntries(classMutations_.asMap(), classTransformer_);
   }
 
@@ -43,4 +43,8 @@ public class MutatedPackage extends MutationResult {
 
 
   private Multimap<String, Mutation> classMutations_;
+
+  public int compareTo(MutatedPackage other) {
+    return this.getMutationStats().getUndetected() - other.getMutationStats().getUndetected();
+  }
 }

@@ -1,10 +1,6 @@
 package org.jenkinsci.plugins.pitmutation.targets;
 
 import java.math.BigDecimal;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * @author  Ed Kimber

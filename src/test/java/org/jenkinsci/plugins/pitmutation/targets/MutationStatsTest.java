@@ -18,7 +18,7 @@ import static org.mockito.Mockito.when;
 public class MutationStatsTest {
 
   @Test
-  public void correctPercentValue() {
+  public void killPercentCorrectlyCalculated() {
     MutationStats stats = new MutationStats() {
 
       @Override

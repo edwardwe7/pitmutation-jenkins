@@ -12,7 +12,7 @@ import org.jenkinsci.plugins.pitmutation.MutationReport;
 /**
  * @author edward
  */
-public class ModuleResult extends MutationResult implements Serializable  {
+public class ModuleResult extends MutationResult<ModuleResult> implements Serializable  {
 
   public ModuleResult(String name, MutationResult parent, MutationReport report) {
     super(name, parent);
@@ -73,6 +73,10 @@ public class ModuleResult extends MutationResult implements Serializable  {
 ////              return MutatedClass.createPair(name, getOwner(), value.leftValue(), value.rightValue());
 //            }
 //          };
+
+  public int compareTo(ModuleResult other) {
+    return this.getMutationStats().getUndetected() - other.getMutationStats().getUndetected();
+  }
 
   private static final Logger logger = Logger.getLogger(ModuleResult.class.getName());
 
