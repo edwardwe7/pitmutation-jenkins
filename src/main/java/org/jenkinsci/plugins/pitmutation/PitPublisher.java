@@ -56,7 +56,7 @@ public class PitPublisher extends Recorder {
 
       ParseReportCallable fileCallable = new ParseReportCallable(mutationStatsFile_);
       FilePath[] reports = moduleRoot.act(fileCallable);
-      publishReports(reports, new FilePath(build.getRootDir()));
+      publishReports(reports, new FilePath(build.getRootDir()), build.getModuleRoot().getRemote());
 
       //publish latest reports
       PitBuildAction action = new PitBuildAction(build);
@@ -74,12 +74,14 @@ public class PitPublisher extends Recorder {
     return new PitProjectAction(project);
   }
 
-  void publishReports(FilePath[] reports, FilePath buildTarget) {
+  void publishReports(FilePath[] reports, FilePath buildTarget, final String base) {
     for (int i = 0; i < reports.length; i++) {
       FilePath report = reports[i];
       listener_.getLogger().println("Publishing mutation report: " + report.getRemote());
-
-      final FilePath targetPath = new FilePath(buildTarget, "mutation-report" + (i == 0 ? "" : i));
+      
+      final String moduleName = report.getRemote().replace(base, "").split("/")[1];
+            
+      final FilePath targetPath = new FilePath(buildTarget, "mutation-report-" + moduleName);
       try {
         reports[i].getParent().copyRecursiveTo(targetPath);
       } catch (IOException e) {

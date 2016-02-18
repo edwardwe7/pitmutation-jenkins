@@ -24,6 +24,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 
 /**
  * @author edward
@@ -71,15 +74,30 @@ public class PitBuildAction implements HealthReportingAction, StaplerProxy {
     Map<String, MutationReport> reports = new HashMap<String, MutationReport>();
 
     try {
-      FilePath[] files = new FilePath(owner_.getRootDir()).list("mutation-report*/mutations.xml");
+      FilePath[] files = new FilePath(owner_.getRootDir()).list("mutation-report-*/mutations.xml");
 
       if (files.length < 1) {
-        logger.log(Level.WARNING, "Could not find mutation-report*/mutations.xml in " + owner_.getRootDir());
+        logger.log(Level.WARNING, "Could not find mutation-report-*/mutations.xml in " + owner_.getRootDir());
       }
 
       for (int i = 0; i < files.length; i++) {
         logger.log(Level.WARNING, "Creating report for file: " + files[i].getRemote());
-        reports.put(String.valueOf(i), MutationReport.create(files[i].read()));
+        
+        final String pattern = ".*mutation-report-([^/]*).*";
+        Pattern r = Pattern.compile(pattern);
+        
+        String name = "";
+        
+        Matcher m = r.matcher(files[i].getRemote());
+        if (m.find()) 
+        {
+        	name = m.group(1);
+        }
+        else
+        {
+        	name = String.valueOf(i);
+        }
+        reports.put(name, MutationReport.create(files[i].read()));
       }
     } catch (IOException e) {
       e.printStackTrace();

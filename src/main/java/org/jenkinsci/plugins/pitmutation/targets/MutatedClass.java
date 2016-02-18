@@ -46,7 +46,7 @@ public class MutatedClass extends MutationResult<MutatedClass> {
 
   public String getSourceFileContent() {
     try {
-      return new TextFile(new File(getOwner().getRootDir(), "mutation-report/" + package_ + File.separator + fileName_)).read();
+      return new TextFile(new File(getOwner().getRootDir(), "mutation-report-" + getParent().getParent().getName() + "/" + package_ + File.separator + fileName_)).read();
     }
     catch (IOException exception) {
       return "Could not read source file: " + getOwner().getRootDir().getPath()
